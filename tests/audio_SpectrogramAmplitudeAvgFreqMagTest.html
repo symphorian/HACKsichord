@@ -1,0 +1,425 @@
+<html>                                                                  
+<head>
+	<style>
+	    #freqcanvas {
+	        margin-left: auto;
+	        margin-right: auto;
+	        display: block;
+	        background-color: black;
+	    }
+	    #timecanvas {
+	        margin-left: auto;
+	        margin-right: auto;
+	        display: block;
+	        background-color: black;
+	    }
+	    #magcanvas {
+	        margin-left: auto;
+	        margin-right: auto;
+	        display: block;
+	        background-color: black;
+	    }
+	    #controls {
+	        text-align: center;
+	    }
+	    #start_button, #stop_button {
+	        font-size: 16pt;
+	    }
+	</style>
+
+	<script type="text/javascript" src="Source/chroma.min.js"></script>
+	<script type="text/javascript">
+
+		// Hacks to deal with different function names in different browsers
+		window.requestAnimFrame = (function(){
+		  return  window.requestAnimationFrame       ||
+		          window.webkitRequestAnimationFrame ||
+		          window.mozRequestAnimationFrame    ||
+		          function(callback, element){
+		            window.setTimeout(callback, 1000 / 60);
+		          };
+		})();
+
+		window.AudioContext = (function(){
+		    return  window.webkitAudioContext || window.AudioContext || window.mozAudioContext;
+		})();
+
+		// Global Variables for Audio
+		var audioContext;
+		var audioBuffer;
+		var sourceNode;
+		var analyserNode;
+		var javascriptNode;
+		var oscillatorNode;
+		var dynamicsCompressorNode;
+		var gainNode;
+		var audioData = null;
+		var audioPlaying = false;
+		var sampleSize = 1024;  // number of samples to collect before analyzing data
+		var fftSize = 1024;
+		var amplitudeArray;     // array to hold time domain data
+		var frequencyArray;
+
+		// This must be hosted on the same server as this page - otherwise you get a Cross Site Scripting error
+		//var audioUrl = "/tests/Assets/Audio/FutureWorld.mp3";
+		//var audioUrl = "/tests/Assets/Audio/Class_EXSPHERE_NOSURGE.mp3";
+		var audioUrl = "/tests/Assets/Audio/DQM_NeverEndingJourney.mp3";
+
+		// Global Variables for the Graphics
+		//var canvasWidth = 512; // TUTORIALS 1 & 2
+		var canvasWidth  = 800; // TUTORIALS 3 & 4
+		var canvasHeight = 256;
+		var freqCanvas;
+		var tempCanvas = document.createElement("canvas");
+		tempCanvas.width = 3200;
+		tempCanvas.height = 1024;
+		var tempctx = tempCanvas.getContext("2d");
+		var freqctx;
+		var timectx;
+		var magctx;
+		var gradient;
+		var column = 0;
+
+		// Uses the chroma.js library by Gregor Aisch to create a color gradient
+	    // download from https://github.com/gka/chroma.js
+	    var colorScale = new chroma.scale(['black', 'red', 'yellow', 'white']).out('hex');
+
+		window.onload = function() {
+			freqCanvas = document.getElementById('freqcanvas');
+			freqctx = document.getElementById('freqcanvas').getContext("2d");
+			timectx = document.getElementById('timecanvas').getContext("2d");
+			magctx = document.getElementById('magcanvas').getContext("2d");
+			gradient = timectx.createLinearGradient(0,0,3200,0);  // **
+	        gradient.addColorStop(0.0,'#ff0000');   // **
+	        gradient.addColorStop(1.0,'#ffff00');  // **
+
+	        freqCanvas.addEventListener('mousemove', function(e) {
+	        	var mousePos = getMousePos(freqcanvas, e);
+	        	if (oscillatorNode != undefined) {
+	        		oscillatorNode.frequency.value = (canvasHeight-mousePos.y) * audioContext.sampleRate / fftSize;
+	        	}
+	        })
+
+		    // the AudioContext is the primary 'container' for all your audio node objects
+		    try {
+		        audioContext = new AudioContext();
+		    } catch(e) {
+		        alert('Web Audio API is not supported in this browser');
+		    }
+		}
+
+		function getMousePos(canvas, e) {
+	        var rect = canvas.getBoundingClientRect();
+	        return {
+	          x: e.clientX - rect.left,
+	          y: e.clientY - rect.top
+	        };
+	      }
+
+		function playClick() {
+		    //e.preventDefault();
+
+		    column = 0;
+
+		    // Set up the audio Analyser, the Source Buffer and javascriptNode
+		    setupAudioNodes();
+
+		    // setup the event handler that is triggered every time enough samples have been collected
+		    // trigger the audio analysis and draw the results
+		    javascriptNode.onaudioprocess = function () {
+
+		        // get the Time Domain data for this sample
+		        analyserNode.getByteTimeDomainData(amplitudeArray);
+
+		        // get the Frequency Domain data for this sample
+                analyserNode.getByteFrequencyData(frequencyArray);  // **
+
+		        // draw the display if the audio is playing
+		        if (audioPlaying == true) {
+		            requestAnimFrame(drawMovingCanvas);
+		        }
+		    }
+
+		    // Load the Audio the first time through, otherwise play it from the buffer
+		    if(audioData == null) {
+		        loadSound(audioUrl);
+		    } else {
+		        playSound(audioData);
+		    }
+		}
+
+		function stopClick() {
+		    // e.preventDefault();
+		    sourceNode.stop(0);
+		    if (oscillatorNode != undefined) {
+		    	oscillatorNode.stop(0);
+		    }
+		    audioPlaying = false;
+		}
+
+
+		function setupAudioNodes() {
+			var runthroughComplete = sourceNode != undefined;
+			if (sourceNode != undefined) {
+				sourceNode.disconnect();
+				analyserNode.disconnect();
+				javascriptNode.disconnect();
+				if (oscillatorNode != undefined) {
+					oscillatorNode.disconnect();
+					gainNode.disconnect();
+				}
+				dynamicsCompressorNode.disconnect();
+			}
+
+		    sourceNode     = audioContext.createBufferSource();
+
+		    analyserNode   = audioContext.createAnalyser();
+		    analyserNode.smoothingTimeConstant = 0.0;
+        	analyserNode.fftSize = fftSize;
+
+		    javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
+
+		    // Create the array for the data values
+		    amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
+
+		    // Create the array for the data values
+        	frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);    // **
+
+        	dynamicsCompressorNode = audioContext.createDynamicsCompressor();
+
+		    // Now connect the nodes together
+		    sourceNode.connect(dynamicsCompressorNode);
+		    
+		    dynamicsCompressorNode.connect(audioContext.destination);
+
+		    if (runthroughComplete) {
+	        	oscillatorNode = audioContext.createOscillator();
+
+	        	gainNode = audioContext.createGain();
+	        	gainNode.gain.value = 0.1;
+
+	        	oscillatorNode.connect(gainNode);
+		    	gainNode.connect(dynamicsCompressorNode);
+        	}
+
+		    //sourceNode.connect(analyserNode);
+		    dynamicsCompressorNode.connect(analyserNode);
+		    analyserNode.connect(javascriptNode);
+		    javascriptNode.connect(audioContext.destination);
+		}
+
+		// Load the audio from the URL via Ajax and store it in global variable audioData
+		// Note that the audio load is asynchronous
+		function loadSound(url) {
+		    var request = new XMLHttpRequest();
+		    request.open('GET', url, true);
+		    request.responseType = 'arraybuffer';
+
+		    // When loaded, decode the data and play the sound
+		    request.onload = function () {
+		        audioContext.decodeAudioData(request.response, function (buffer) {
+		            audioData = buffer;
+		            playSound(audioData);
+		        }, onError);
+		    }
+		    request.send();
+		}
+
+		// Play the audio and loop until stopped
+		function playSound(buffer) {
+		    sourceNode.buffer = buffer;
+		    sourceNode.start(0);    // Play the sound now
+		    sourceNode.loop = true;
+		    audioPlaying = true;
+
+		    if (oscillatorNode != undefined) {
+		    	oscillatorNode.start(0);
+		    }
+		}
+
+		function onError(e) {
+		    console.log(e);
+		}
+
+		function drawTimeDomain1() {
+		    clearCanvas();
+		    for (var i = 0; i < amplitudeArray.length; i++) {
+		        var value = amplitudeArray[i] / 256;
+		        var y = canvasHeight - (canvasHeight * value) - 1;
+		        timectx.fillStyle = '#ffffff';
+		        timectx.fillRect(i, y, 1, 1);
+		    }
+		}
+
+		function drawTimeDomain2() {
+	        var minValue = 9999999;
+	        var maxValue = 0;
+	 
+	        for (var i = 0; i < amplitudeArray.length; i++) {
+	            var value = amplitudeArray[i] / 256;
+	            if(value > maxValue) {
+	                maxValue = value;
+	            } else if(value < minValue) {
+	                minValue = value;
+	            }
+	        }
+	 
+	        var y_lo = canvasHeight - (canvasHeight * minValue) - 1;
+	        var y_hi = canvasHeight - (canvasHeight * maxValue) - 1;
+
+	        tempctx.fillStyle = '#ffffff';
+	        tempctx.fillRect(column, y_lo + canvasHeight*1, 1, y_hi - y_lo);
+
+	        column += 1;
+	        if (column >= canvasWidth*4) {
+	        	column = 0;
+	        	stopClick();
+	        	playClick();
+	        }
+	    }
+
+
+		function drawFrequencyDomain1() {
+	        clearCanvas();
+	        for (var i = 0; i < frequencyArray.length; i++) {
+	            freqctx.fillStyle = '#000000';                             // **
+	            var y = canvasHeight - Math.round(frequencyArray[i]);  // **
+	            freqctx.fillRect(i,0,1,y);                                 // **
+	        }
+	    }
+
+
+	    var pastMags = new Array();
+	    var maxMags = 5;
+	    var magIndex = 0;
+
+	    function drawFrequencyMag() {
+	        // get average magnitude
+	        var sum = 0;
+	        for (var i = 0; i < frequencyArray.length; i++) {
+	            sum += frequencyArray[i];  
+	        }
+
+	        var avg = sum / frequencyArray.length;
+
+	        // get running average magnitude
+	        sum = 0;
+	        for (var i = 0; i < pastMags.length; i++) {
+	        	sum += pastMags[i];
+	        }
+
+	        var runningAvg = sum / pastMags.length;
+
+	        // save average magnitude
+	        pastMags[magIndex] = avg;
+	        magIndex++;
+	        if (magIndex >= 10) {
+	        	magIndex = 0;
+	        }
+
+	        // if avg mag > running avg, draw diff as intensity of vertical line
+	        if (avg > runningAvg) {
+	        	var diff = Math.round(avg-runningAvg)*5 + 10;
+	        	if (diff < 10) {
+	        		tempctx.fillStyle = "#00000" + diff; 
+	        	}
+	        	else if (diff > 99) {
+					tempctx.fillStyle = "#0000FF"; 
+	        	}
+	        	else {
+	        		tempctx.fillStyle = "#0000" + diff; 
+	        	}
+	        	
+	        	tempctx.fillRect(column,canvasHeight*2,1,canvasHeight); 
+	        }
+
+	        // draw avg
+	        tempctx.fillStyle = gradient; 
+	        tempctx.fillRect(column,canvasHeight*2,1,avg);
+
+	        
+	    }
+
+	    // Draw the Spectrogram from the frequency array
+	    // The array has 512 elements - but truncate at 256
+	    function drawSpectrogram() {
+	    	for (var i = 0; i < frequencyArray.length; i++) {
+	        	//if (frequencyArray[i] / 256.0 > 0.9) {
+		            // Get the color from the color map, draw 1x1 pixel rectangle
+		            tempctx.fillStyle = colorScale(frequencyArray[i] / 256.0);
+		            tempctx.fillRect(column,canvasHeight - i, 1, 1);
+		        //}
+	        }
+	    }
+
+	    function drawFreqAndTime() {
+	    	drawTimeDomain2();
+	    	drawSpectrogram();
+	    }
+
+	    function drawFreqAndTimeAndMag() {
+	    	drawTimeDomain2();
+	    	drawSpectrogram();
+	    	drawFrequencyMag();
+	    }
+
+	    function drawMovingCanvas() {
+	    	drawFreqAndTimeAndMag();
+	    	clearFreqAndTimeAndMag();
+	    	freqctx.drawImage(tempCanvas, column - 400, canvasHeight*0, canvasWidth, canvasHeight,0,0,canvasWidth,canvasHeight);
+	    	timectx.drawImage(tempCanvas, column - 400, canvasHeight*1, canvasWidth, canvasHeight,0,0,canvasWidth,canvasHeight);
+	    	magctx.drawImage(tempCanvas, column - 400, canvasHeight*2, canvasWidth, canvasHeight,0,0,canvasWidth,canvasHeight);
+	    }
+
+		function clearFreqCanvas() {
+			// TUTORIAL 1, 3, & 4 - Time Domain and Spectrogram
+			freqctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+			// TUTORIAL 2 - Frequency Domain Snapshots
+			// ctx.fillStyle = gradient;
+			// ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+		    
+		}
+
+		function clearTimeCanvas() {
+			// TUTORIAL 1, 3, & 4 - Time Domain and Spectrogram
+			timectx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+			// TUTORIAL 2 - Frequency Domain Snapshots
+			// ctx.fillStyle = gradient;
+			// ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+		    
+		}
+
+		function clearMagCanvas() {
+			magctx.clearRect(0, 0, canvasWidth, canvasHeight);
+		}
+
+		function clearFreqAndTime() {
+			clearFreqCanvas();
+			clearTimeCanvas();
+		}
+
+		function clearFreqAndTimeAndMag() {
+			clearFreqCanvas();
+			clearTimeCanvas();
+			clearMagCanvas();
+		}
+
+
+
+	</script>
+
+</head>
+
+<body>
+	<canvas id="freqcanvas" width="800" height="256" ></canvas>
+ 	<canvas id="timecanvas" width="800" height="256" ></canvas>
+ 	<canvas id="magcanvas" width="800" height="256" ></canvas>
+	<p id="controls">
+	  <input type="button" id="start_button" value="Start" onclick="playClick();">
+	  &nbsp; &nbsp;
+	  <input type="button" id="stop_button" value="Stop" onclick="stopClick();">
+	</p>
+</body>
+</html>

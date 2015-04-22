@@ -1,0 +1,259 @@
+<html>                                                                  
+<head>
+	<script type="text/javascript">
+
+	window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+	var audioContext = new AudioContext();
+
+	//var audioProcessor = audioContext.createScriptProcessor(16384,0,1);
+	
+
+	var volume = 0.5;
+	var frequency = 440;
+
+	var shouldPlay = false;
+
+	var dynamicsCompressorNode = audioContext.createDynamicsCompressor();
+	dynamicsCompressorNode.connect(audioContext.destination);
+
+	var gainValue = 0.1;
+
+	var gainNode = audioContext.createGain();
+	gainNode.gain.value = gainValue;
+	var oscillatorNode = audioContext.createOscillator();
+	oscillatorNode.frequency.value = 587.33; //D
+	oscillatorNode.connect(gainNode);
+	gainNode.connect(dynamicsCompressorNode);
+	// oscillatorNode.start(audioContext.currentTime,0,2);
+	// oscillatorNode.stop(audioContext.currentTime + 2);
+
+	oscillatorNode.start(0);
+
+
+
+	var gainNode2 = audioContext.createGain();
+	gainNode2.gain.value = gainValue;
+	var oscillatorNode2 = audioContext.createOscillator();
+	oscillatorNode2.frequency.value = 587.33; //D
+	oscillatorNode2.connect(gainNode2);
+	gainNode2.connect(dynamicsCompressorNode);
+	// oscillatorNode.start(audioContext.currentTime,0,2);
+	// oscillatorNode.stop(audioContext.currentTime + 2);
+
+	oscillatorNode2.start(0);
+
+	// audioProcessor.onaudioprocess = function(e) {
+	// 	if (shouldPlay) {
+	// 		var outputBuffer = e.outputBuffer;
+
+	// 		for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+	// 			var outData = outputBuffer.getChannelData(channel);
+
+	// 			for (var sample = 0; sample < outputBuffer.length; sample++) {
+	// 				var sampleTime = audioContext.currentTime + outputBuffer.duration * sample/outputBuffer.length;
+
+	// 				outData[sample] = volume * Math.sin(sampleTime * frequency * Math.PI * 2);
+	// 			}
+	// 		}
+	// 	}
+	// 	else {
+	// 		var outputBuffer = e.outputBuffer;
+
+	// 		for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
+	// 			var outData = outputBuffer.getChannelData(channel);
+
+	// 			for (var sample = 0; sample < outputBuffer.length; sample++) {
+	// 				// var sampleTime = audioContext.currentTime + outputBuffer.duration * sample/outputBuffer.length;
+
+	// 				outData[sample] = 0; //volume * Math.sin(sampleTime * frequency * Math.PI * 2);
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	//audioProcessor.connect(audioContext.destination);
+	
+
+	// var soundBuffer = null;
+
+	// function onError() {}
+
+	// function loadSound(url) {
+	// 	var request	 = new XMLHttpRequest();
+	// 	request.open('GET', url, true);
+	// 	request.responseType = 'arraybuffer';
+
+	// 	request.onload = function() {
+	// 		audioContext.decodeAudioData(request.response, function(buffer) {
+	// 			soundBuffer = buffer;
+	// 		}, onError);
+	// 	}
+	// 	request.send();
+	// }
+
+	// function playSound() {
+	// 	//shouldPlay = !shouldPlay;
+	// 	// var source = audioContext.createBufferSource();
+	// 	// source.buffer = soundBuffer;
+	// 	// source.connect(audioContext.destination);
+	// 	// source.start(0);
+
+	// 	var oscillatorNode = audioContext.createOscillator();
+	// 	oscillatorNode.frequency.value = 100;
+	// 	oscillatorNode.connect(audioContext.destination);
+	// 	oscillatorNode.start(audioContext.currentTime,0,2);
+	// 	oscillatorNode.stop(audioContext.currentTime + 2);
+	// }
+
+	// window.onload = function() {
+	// 	console.log("here");
+
+
+
+
+	// 	loadSound('http://www.symphori.com/StageClear.mp3');
+
+	window.onmousemove = function(e) {
+		oscillatorNode2.frequency.value = e.pageX;
+		oscillatorNode.frequency.value = e.pageY;
+
+		document.getElementById('freq1').innerHTML = 'X Frequency:' + e.pageX;
+		document.getElementById('freq2').innerHTML = 'Y Frequency:' + e.pageY;
+	}	
+
+	function playSound1() {
+		// var gainNode = audioContext.createGain();
+		// gainNode.gain.value = gainValue;
+		// var oscillatorNode = audioContext.createOscillator();
+		oscillatorNode.frequency.value = 440; //A
+		// oscillatorNode.connect(gainNode);
+		// gainNode.connect(dynamicsCompressorNode);
+		// oscillatorNode.start(audioContext.currentTime,0,2);
+		// oscillatorNode.stop(audioContext.currentTime + 2);
+	}
+
+	function playSound2() {
+		// var gainNode = audioContext.createGain();
+		// gainNode.gain.value = gainValue;
+		// var oscillatorNode = audioContext.createOscillator();
+		oscillatorNode.frequency.value = 493.88; //B
+		// oscillatorNode.connect(gainNode);
+		// gainNode.connect(dynamicsCompressorNode);
+		// oscillatorNode.start(audioContext.currentTime,0,2);
+		// oscillatorNode.stop(audioContext.currentTime + 2);
+	}
+
+	function playSound3() {
+		// var gainNode = audioContext.createGain();
+		// gainNode.gain.value = gainValue;
+		// var oscillatorNode = audioContext.createOscillator();
+		oscillatorNode.frequency.value = 523.25; //C
+		// oscillatorNode.connect(gainNode);
+		// gainNode.connect(dynamicsCompressorNode);
+		// oscillatorNode.start(audioContext.currentTime,0,2);
+		// oscillatorNode.stop(audioContext.currentTime + 2);
+	}
+
+	function playSound4() {
+		// var gainNode = audioContext.createGain();
+		// gainNode.gain.value = gainValue;
+		// var oscillatorNode = audioContext.createOscillator();
+		oscillatorNode.frequency.value = 587.33; //D
+		// oscillatorNode.connect(gainNode);
+		// gainNode.connect(dynamicsCompressorNode);
+		// oscillatorNode.start(audioContext.currentTime,0,2);
+		// oscillatorNode.stop(audioContext.currentTime + 2);
+	}
+
+	function playSound5() {
+		// var gainNode = audioContext.createGain();
+		// gainNode.gain.value = gainValue;
+		// var oscillatorNode = audioContext.createOscillator();
+		oscillatorNode.frequency.value = 659.25; //E
+		// oscillatorNode.connect(gainNode);
+		// gainNode.connect(dynamicsCompressorNode);
+		// oscillatorNode.start(audioContext.currentTime,0,2);
+		// oscillatorNode.stop(audioContext.currentTime + 2);
+	}
+
+
+
+
+	// 	// var canvas = document.createElement("canvas");
+	// 	// canvas.setAttribute("style", "position: absolute; left: 0px; top: 0px; z-index: 1;")
+	// 	// /*this.canvas.setAttribute("position", "absolute");
+	// 	// this.canvas.setAttribute("left", "0px");
+	// 	// this.canvas.setAttribute("top", "0px");*/
+	// 	// canvas.setAttribute("width", 500);
+	// 	// canvas.setAttribute("height", 500);
+	// 	// canvas.setAttribute("z-index", 1);
+
+	// 	// document.body.appendChild(canvas);
+
+	// 	// var ctx = canvas.getContext("2d");
+
+	// 	// var bird = new Image();
+	// 	// bird.src = "Frame1.jpg";
+
+	// 	// var dice = new Image();
+	// 	// dice.src = "dice.png";
+
+	// 	// var abstract = new Image();
+	// 	// abstract.src = "abstract8.jpg";
+
+	// 	// ctx.drawImage(bird,0,0);
+
+		
+
+	// 	// ctx.drawImage(dice, 0,0);
+	// 	// ctx.translate(100,100);
+	// 	// ctx.rotate(90*Math.PI/180);
+	// 	// ctx.translate(-100,-100);
+
+	// 	// ctx.globalCompositeOperation = "destination-out";
+
+	// 	// ctx.drawImage(dice, 0, 0);
+
+	// 	//ctx.drawImage(abstract, 0, 0);
+
+
+	// 	/*
+	// 		image modifications steps
+
+	// 		1. draw frame image
+	// 			gco = source-over
+	// 			drawImage(frame)
+
+	// 		2. add filter
+	// 			gco = source-atop
+	// 			if color
+	// 				set fill color = filter
+	// 				drawrect(0,0,framew,frameh)
+	// 			if image
+	// 				drawImage(filter)
+
+	// 		3. add mask
+	// 			gco = destination-in
+	// 			drawImage(mask)
+
+	// 	*/
+
+	// 	// consider a MaskBlock
+
+	// }
+
+	</script>
+
+</head>
+
+<body>
+	<button onclick='playSound1()'>1</button>
+	<button onclick='playSound2()'>2</button>
+	<button onclick='playSound3()'>3</button>
+	<button onclick='playSound4()'>4</button>
+	<button onclick='playSound5()'>5</button>
+	<p id='freq1'></p>
+	<p id='freq2'></p>
+</body>
+</html>
