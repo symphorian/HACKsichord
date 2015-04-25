@@ -1,6 +1,5 @@
 <html>                                                                  
 <head>
-
 	<style>
     #freqcanvas {
 			margin-left: auto;
@@ -14,6 +13,11 @@
 	</style>
 
 	<script type="text/javascript" src="Source/chroma.min.js"></script>
+	<script type="text/javascript" src="Source/HACKsichordDefinitions.js"></script>
+	<script type="text/javascript" src="Source/HACKsichordNotes.js"></script>
+	<script type="text/javascript" src="Source/HACKsichordKeySignatures.js"></script>
+	<script type="text/javascript" src="Source/HACKsichordInstrument.js"></script>
+	<script type="text/javascript" src="Source/HACKsichordBuilder.js"></script>
 	<script type="text/javascript">
 		window.AudioContext = (function() {
 		  return window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
@@ -23,7 +27,7 @@
 		window.requestAnimFrame = (function(){
 		  return window.requestAnimationFrame ||
 		    window.webkitRequestAnimationFrame ||
-		    window.mozRequestAnimationFrame    ||
+		    window.mozRequestAnimationFrame ||
 		    function(callback, element){
 		      window.setTimeout(callback, 1000 / 60);
 		    };
@@ -50,151 +54,8 @@
     // download from https://github.com/gka/chroma.js
     var colorScale = new chroma.scale(['black', 'red', 'yellow', 'white']).out('hex');
 
-
-
-
-
-
-
-
-
-
-		//-------------------------
-		// XML note info dictionaries
-		var notes = new Object();
-		var notesByOctaveAndName = new Object(); // Object<Octave, Object<Name, Note>>
-		var notesByHalfStepNumber = new Object(); // Object<HalfStepNumber, Array<Note>>
-
-		// octave definitions
-		var generalOctaveDefinition = ["C","D","E","F","G","A","B"];
-		var flatOctaveDefinition = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
-		var sharpOctaveDefinition = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-
-		// key signature definitions
-		var keySignatures = new Object();
-
-		// step definitions
-		var halfStep = 1;
-		var wholeStep = 2;
-		var tripleStep = 3;
-
-		// common scale template definitions
-		var chromaticScaleTemplate = [
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep,
-		  halfStep
-		];
-		var majorScaleTemplate = [
-		  wholeStep,
-		  wholeStep,
-		  halfStep,
-		  wholeStep,
-		  wholeStep,
-		  wholeStep,
-		  halfStep
-		];
-		var minorNaturalScaleTemplate = [ // use for descending
-			wholeStep,
-			halfStep,
-			wholeStep,
-			wholeStep,
-			halfStep,
-			wholeStep,
-			wholeStep
-	  ]; 
-		var minorHarmonicScaleTemplate = [
-		  wholeStep,
-		  halfStep,
-		  wholeStep,
-		  wholeStep,
-		  halfStep,
-		  tripleStep,
-		  halfStep
-		];
-		var minorMelodicScaleTemplate = [ // use for ascending
-		  wholeStep,
-		  halfStep,
-		  wholeStep,
-		  wholeStep,
-		  wholeStep,
-		  wholeStep,
-		  halfStep
-		];
-
-		// interval definitions
-		var perfect1stInterval = 0*halfStep;
-		var augmented1stInterval = perfect1stInterval+1*halfStep;
-		
-		var major2ndInterval = 2*halfStep; // 2
-		var minor2ndInterval = major2ndInterval-1*halfStep; // 1
-		var augmented2ndInterval = major2ndInterval+1*halfStep; // 3
-		var diminished2ndInterval = minor2ndInterval-1*halfStep; // 0 
-
-		var major3rdInterval = 4*halfStep; // 4
-		var minor3rdInterval = major3rdInterval-1*halfStep; // 3
-		var augmented3rdInterval = major3rdInterval+1*halfStep; // 5
-		var diminished3rdInterval = minor3rdInterval-1*halfStep; // 2
-
-		var perfect4thInterval = 5*halfStep; // 5
-		var augmented4thInterval = perfect4thInterval+1*halfStep; // 6
-		var diminished4thInterval = perfect4thInterval-1*halfStep; // 4
-
-		var perfect5thInterval = 7*halfStep; // 7
-		var augmented5thInterval = perfect5thInterval+1*halfStep; // 8
-		var diminished5thInterval = perfect5thInterval-1*halfStep; // 6
-
-		var major6thInterval = 9*halfStep; // 9
-		var minor6thInterval = major6thInterval-1*halfStep; // 8
-		var augmented6thInterval = major6thInterval+1*halfStep; // 10
-		var diminished6thInterval = minor6thInterval-1*halfStep; // 7
-
-		var major7thInterval = 11*halfStep; // 11
-		var minor7thInterval = major7thInterval-1*halfStep; // 10
-		var augmented7thInterval = major7thInterval+1*halfStep; // 12
-		var diminished7thInterval = minor7thInterval-1*halfStep; // 9
-
-		var perfect8thInterval = 12*halfStep; // 12
-		var augmented8thInterval = perfect8thInterval+1*halfStep; // 13 (1)
-		var diminished8thInterval = perfect8thInterval-1*halfStep; // 11
-
-		// chord template definitions
-		var majorTriadChordTemplate = [major3rdInterval,perfect5thInterval];
-		var minorTriadChordTemplate = [minor3rdInterval,perfect5thInterval];
-		var augmentedTriadChordTemplate = [major3rdInterval,augmented5thInterval];
-		var diminishedTriadChordTemplate = [minor3rdInterval,diminished5thInterval];
-
-		var dominant7thChordTemplate = majorTriadChordTemplate.concat([minor7thInterval]);
-		var major7thChordTemplate = majorTriadChordTemplate.concat([major7thInterval]);
-		var minor7thChordTemplate = minorTriadChordTemplate.concat([minor7thInterval]);
-		var halfDiminished7thChordTemplate = 
-		  diminishedTriadChordTemplate.concat([minor7thInterval]);
-		var fullyDiminished7thChordTemplate = 
-		  diminishedTriadChordTemplate.concat([diminished7thInterval]);
-
-		var minorMajor7thChordTemplate = minorTriadChordTemplate.concat([major7thInterval]);
-		var augmentedMajor7thChordTemplate = 
-		  augmentedTriadChordTemplate.concat([major7thInterval]);
-		var augmented7thChordTemplate = augmentedTriadChordTemplate.concat([minor7thInterval]);
-
-
-		var ScaleType = function() {
-			this.CHROMATIC = 0
-			this.MAJOR = 1;
-			this.MINOR_NATURAL = 2;
-			this.MINOR_HARMONIC = 3;
-			this.MINOR_MELODIC = 4;
-		}
-		var SCALETYPE = new ScaleType();
-
 		var audioContext;
+		var instrument;
 
 		window.onload = function() {
 			try {
@@ -220,9 +81,7 @@
 		    requestAnimFrame(drawSpectrogram);
 		  }
 
-			loadNotes();
-			loadNotesIntoDictionaries();
-			loadKeySignatures();
+			instrument = new HSC.Instrument(audioContext);
 		}
 
 		function setupAudioNodes() {
@@ -259,549 +118,385 @@
 	    }
 	  }
 
-		function playRandomMeasures(timesToPlay) {
-			var randomScaleType = Math.floor(Math.random()*5);
-			var randomHalfStepNumber = Math.floor(Math.random()*40+36);
+		// function playRandomMeasures(timesToPlay) {
+		// 	var randomScaleType = Math.floor(Math.random()*5);
+		// 	var randomHalfStepNumber = Math.floor(Math.random()*40+36);
 
-			var scaleFrequencies = 
-			  constructScaleByScaleTypeAndHalfStepNumber(randomScaleType, randomHalfStepNumber);
+		// 	var scaleFrequencies = 
+		// 	  constructScaleByScaleTypeAndHalfStepNumber(randomScaleType, randomHalfStepNumber);
 
-			for (var i = 0; i < timesToPlay; i++) {
-				playRandomMeasureWithScaleAtFutureTime(scaleFrequencies,i*4);
+		// 	for (var i = 0; i < timesToPlay; i++) {
+		// 		playRandomMeasureWithScaleAtFutureTime(scaleFrequencies,i*4);
+		// 	}
+		// }
+
+		// function playRandomMeasure() {
+		// 	var randomScaleType = Math.floor(Math.random()*5);
+		// 	var randomHalfStepNumber = Math.floor(Math.random()*40+36);
+
+		// 	var scaleFrequencies = 
+		// 	  constructScaleByScaleTypeAndHalfStepNumber(randomScaleType, randomHalfStepNumber);
+
+		// 	playRandomMeasureWithScaleAtFutureTime(scaleFrequencies,0);
+		// }
+
+		// function playRandomMeasureWithScaleAtFutureTime(scaleFrequencies, futureBeats) {
+		// 	playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture2(
+		// 		4,
+		// 		80,
+		// 		scaleFrequencies,
+		// 		futureBeats
+		//   );
+		// }
+
+		// function playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture(
+		// 	bpm,
+		// 	tempo,
+		// 	scaleFrequencies,
+		// 	futureBeats
+	 //  ) {
+		// 	var eighthNoteLength = 0.5;
+		// 	var eighthNoteTime = (60 / tempo) / 2;
+		// 	var beatsRemaining = bpm;
+		// 	var currentLength = 0;
+
+		// 	while (beatsRemaining > 0) {
+		// 		var noteLength = Math.ceil(Math.random()*beatsRemaining*2);
+		// 		var noteIndex = Math.floor(Math.random()*scaleFrequencies.length);
+
+		// 		playFrequencyAtFutureTimeForDuration(
+		// 			scaleFrequencies[noteIndex], 
+		// 			futureBeats*eighthNoteTime*2 + currentLength, 
+		// 			eighthNoteTime*noteLength
+		// 	  );
+
+		// 		currentLength += eighthNoteTime*noteLength;
+		// 		beatsRemaining -= eighthNoteLength*noteLength;
+		// 	}
+		// }
+
+		// function playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture2(
+		// 	bpm,
+		// 	tempo,
+		// 	scaleFrequencies,
+		// 	futureBeats
+	 //  ) {
+		// 	var sixteenthNoteLength = 0.25;
+		// 	var sixteenthNoteTime = (60 / tempo) / 4;
+		// 	var beatsRemaining = bpm;
+		// 	var currentLength = 0;
+
+		// 	while (beatsRemaining > 0) {
+		// 		var possibleNoteLengths = [1,2,4,8,16,32];
+		// 		var possibleNoteLengthsLessThanRemaining = new Array();
+		// 		for (var i = 0; i < possibleNoteLengths.length; i++) {
+		// 			if (possibleNoteLengths[i] <= beatsRemaining/sixteenthNoteLength) {
+		// 				possibleNoteLengthsLessThanRemaining.push(possibleNoteLengths[i]);
+		// 			}
+		// 		}
+		// 		var noteLength = possibleNoteLengthsLessThanRemaining[
+		// 	    Math.floor(Math.random()*possibleNoteLengthsLessThanRemaining.length)
+		// 	  ];
+		// 		var noteIndex = Math.floor(Math.random()*scaleFrequencies.length);
+
+		// 		playFrequencyAtFutureTimeForDuration(
+		// 			scaleFrequencies[noteIndex], 
+		// 			(futureBeats/sixteenthNoteLength)*sixteenthNoteTime + currentLength,
+		// 			sixteenthNoteTime*noteLength
+		// 	  );
+
+		// 		var test = sixteenthNoteTime*noteLength;
+
+		// 		if (test == NaN) {
+		// 			console.log("16th * notelength:" + sixteenthNoteTime + notelength);
+		// 		}
+
+		// 		currentLength += sixteenthNoteTime*noteLength;
+		// 		beatsRemaining -= sixteenthNoteLength*noteLength;
+		// 	}
+		// }
+
+		function playCMajorScale() {
+			var scaleType = HSC.ScaleType.MAJOR;
+			var startingNote = HSC.getNoteByOctaveAndName(5, "C");
+			var scale = HSC.buildScale(startingNote, scaleType, true);
+
+			var cues = new Array();
+			var noteLength = 0.5;
+			for (var i = 0; i < scale.length; i++) {
+				cues[i] = new HSC.Cue(noteLength, i*noteLength);
 			}
+
+			instrument.playNotesAtCues(scale, cues);
 		}
 
-		function playRandomMeasure() {
-			var randomScaleType = Math.floor(Math.random()*5);
-			var randomHalfStepNumber = Math.floor(Math.random()*40+36);
+		function playRandomCScale() {
+			var scaleTypes = new Array(HSC.ScaleType.CHROMATIC, HSC.ScaleType.MAJOR, HSC.ScaleType.MINOR_NATURAL, HSC.ScaleType.MINOR_HARMONIC, HSC.ScaleType.MINOR_MELODIC);
+			var randomScaleType = scaleTypes[Math.floor(Math.random()*scaleTypes.length)];
+			var startingNote = HSC.getNoteByOctaveAndName(5, "C");
+			var scale = HSC.buildScale(startingNote, randomScaleType, true);
 
-			var scaleFrequencies = 
-			  constructScaleByScaleTypeAndHalfStepNumber(randomScaleType, randomHalfStepNumber);
-
-			playRandomMeasureWithScaleAtFutureTime(scaleFrequencies,0);
-		}
-
-		function playRandomMeasureWithScaleAtFutureTime(scaleFrequencies, futureBeats) {
-			playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture2(
-				4,
-				80,
-				scaleFrequencies,
-				futureBeats
-		  );
-		}
-
-		function playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture(
-			bpm,
-			tempo,
-			scaleFrequencies,
-			futureBeats
-	  ) {
-			var eighthNoteLength = 0.5;
-			var eighthNoteTime = (60 / tempo) / 2;
-			var beatsRemaining = bpm;
-			var currentLength = 0;
-
-			while (beatsRemaining > 0) {
-				var noteLength = Math.ceil(Math.random()*beatsRemaining*2);
-				var noteIndex = Math.floor(Math.random()*scaleFrequencies.length);
-
-				playFrequencyAtFutureTimeForDuration(
-					scaleFrequencies[noteIndex], 
-					futureBeats*eighthNoteTime*2 + currentLength, 
-					eighthNoteTime*noteLength
-			  );
-
-				currentLength += eighthNoteTime*noteLength;
-				beatsRemaining -= eighthNoteLength*noteLength;
+			var cues = new Array();
+			var noteLength = 0.5;
+			for (var i = 0; i < scale.length; i++) {
+				cues[i] = new HSC.Cue(noteLength, i*noteLength);
 			}
-		}
 
-		function playRandomMeasureWithBeatsPerMeasureTempoAndScaleAtBeatsInFuture2(
-			bpm,
-			tempo,
-			scaleFrequencies,
-			futureBeats
-	  ) {
-			var sixteenthNoteLength = 0.25;
-			var sixteenthNoteTime = (60 / tempo) / 4;
-			var beatsRemaining = bpm;
-			var currentLength = 0;
-
-			while (beatsRemaining > 0) {
-				var possibleNoteLengths = [1,2,4,8,16,32];
-				var possibleNoteLengthsLessThanRemaining = new Array();
-				for (var i = 0; i < possibleNoteLengths.length; i++) {
-					if (possibleNoteLengths[i] <= beatsRemaining/sixteenthNoteLength) {
-						possibleNoteLengthsLessThanRemaining.push(possibleNoteLengths[i]);
-					}
-				}
-				var noteLength = possibleNoteLengthsLessThanRemaining[
-			    Math.floor(Math.random()*possibleNoteLengthsLessThanRemaining.length)
-			  ];
-				var noteIndex = Math.floor(Math.random()*scaleFrequencies.length);
-
-				playFrequencyAtFutureTimeForDuration(
-					scaleFrequencies[noteIndex], 
-					(futureBeats/sixteenthNoteLength)*sixteenthNoteTime + currentLength,
-					sixteenthNoteTime*noteLength
-			  );
-
-				var test = sixteenthNoteTime*noteLength;
-
-				if (test == NaN) {
-					console.log("16th * notelength:" + sixteenthNoteTime + notelength);
-				}
-
-				currentLength += sixteenthNoteTime*noteLength;
-				beatsRemaining -= sixteenthNoteLength*noteLength;
-			}
-		}
-
-
-		function playRandomScale() {
-			var randomScaleType = Math.floor(Math.random()*5);
-			var randomHalfStepNumber = Math.floor(Math.random()*40+36);
-
-			playScaleTypeByHalfStepNumberWithNoteDuration(
-				randomScaleType,
-				randomHalfStepNumber,
-				0.5
-			);
+			instrument.playNotesAtCues(scale, cues);
 		}		
 
-    function getFieldFromXMLNode(xmlNode, fieldName) {
-    	var value = null;
-    	if (xmlNode.getElementsByTagName(fieldName) && 
-    		xmlNode.getElementsByTagName(fieldName).length > 0
-      ) {
-      	if (xmlNode.getElementsByTagName(fieldName)[0].childNodes.length == 0) {
-          value = "";
-      	} else {
-      		value = xmlNode.getElementsByTagName(fieldName)[0].childNodes[0].nodeValue;
-      	}
-    		
-    	}
-    	return value;
-    }
+		function playDiatonicTriadsByOctaveAndName(octave, name) {
+			var diatonicTriads = [
+				HSC.DiatonicTriadType.I,
+				HSC.DiatonicTriadType.ii,
+				HSC.DiatonicTriadType.iii,
+				HSC.DiatonicTriadType.IV,
+				HSC.DiatonicTriadType.V,
+				HSC.DiatonicTriadType.vi,
+				HSC.DiatonicTriadType.viio,
+				HSC.DiatonicTriadType.I,
+			];
+      var scaleType = HSC.ScaleType.MAJOR;
+			var startingNote = HSC.getNoteByOctaveAndName(octave, name);
+			var scale = HSC.buildScale(startingNote, scaleType, false);
 
-		function loadNotes() {
-			var xmlFilename = "NoteFrequencies.xml"
-			var xmlRequest = new XMLHttpRequest();
-			xmlRequest.open("GET", xmlFilename, false);
-			xmlRequest.send();
-			var xmlDoc = xmlRequest.responseXML; 
-			noteNodes = xmlDoc.getElementsByTagName("Note");
+			var chords = new Array();
+			for (var i = 0; i < scale.length; i++) {
+				chords[i] = HSC.buildDiatonicTriad(scale[i], diatonicTriads[i]);
+			}
 
-      for (var i = 0; i < noteNodes.length; i++) {
-      	var node = noteNodes[i];
-      	var id = getFieldFromXMLNode(node, "ID");
-      	if (notes[id] == null) {
-      		notes[id] = new Object();
-      	}
-      	notes[id].Letter = getFieldFromXMLNode(node, "Letter");
-      	notes[id].Sign = getFieldFromXMLNode(node, "Sign");
-      	notes[id].Name = notes[id].Letter + notes[id].Sign;
-      	notes[id].Octave = getFieldFromXMLNode(node, "Octave");
-      	notes[id].Frequency = getFieldFromXMLNode(node, "Frequency");
-      	notes[id].HalfStepNumber = getFieldFromXMLNode(node, "HalfStepNumber");
-      }
-		}
-
-		function loadNotesIntoDictionaries() {
-      for (var id in notes) {
-      	var note = notes[id];
-      	var octave = note.Octave;
-      	var name = note.Name;
-      	var halfStepNumber = note.HalfStepNumber;
-
-      	if (!notesByOctaveAndName[octave]) {
-      		notesByOctaveAndName[octave] = new Object();
-      	}
-      	notesByOctaveAndName[octave][name] = note;
-
-        if (!notesByHalfStepNumber[halfStepNumber]) {
-        	notesByHalfStepNumber[halfStepNumber] = [];
-        }
-        notesByHalfStepNumber[halfStepNumber].push(note);
-      }
-		}
-
-		function loadKeySignatures() {
-			var xmlFilename = "KeySignatures.xml"
-			var xmlRequest = new XMLHttpRequest();
-			xmlRequest.open("GET", xmlFilename, false);
-			xmlRequest.send();
-			var xmlDoc = xmlRequest.responseXML; 
-			var ksNodes = xmlDoc.getElementsByTagName("KeySignature");
-
-			for (var i = 0; i < ksNodes.length; i++) {
-      	var node = ksNodes[i];
-      	var id = getFieldFromXMLNode(node, "ID");
-      	if (keySignatures[id] == null) {
-      		keySignatures[id] = new Object();
-      	}
-      	keySignatures[id].Type = getFieldFromXMLNode(node, "Type");
-      	keySignatures[id].MajorKeyName = getFieldFromXMLNode(node, "MajorKeyName");
-      	keySignatures[id].MinorKeyName = getFieldFromXMLNode(node, "MinorKeyName");
-      	keySignatures[id].SignsByLetter = new Object();
-
-      	var noteNamePairs = node.getElementsByTagName("NoteNamePair");
-      	for (var j = 0; j < noteNamePairs.length; j++) {
-      		var pair = noteNamePairs[j];
-      		var letter = getFieldFromXMLNode(pair, "Letter");
-      		var sign = getFieldFromXMLNode(pair, "Sign");
-      		keySignatures[id].SignsByLetter[letter] = sign;
-      	}
-      }
-		}
-
-		function playScaleTypeByOctaveAndName(scaleType, octave, name) {
-			playScaleTypeByOctaveAndNameWithNoteDuration(scaleType, octave, name, 1);
-		}
-
-		function playScaleTypeByOctaveAndNameWithNoteDuration(
-			scaleType,
-			octave,
-			name,
-			noteDuration
-	  ) {
-			var scaleFrequencies = 
-			  constructScaleByScaleTypeOctaveAndName(scaleType, octave, name);
-
-			playScaleWithNoteDuration(scaleFrequencies, noteDuration);
-		}
-
-		function playScaleTypeByHalfStepNumber(scaleType, halfStepNumber) {
-			playScaleTypeByHalfStepNumberWithNoteDuration(scaleType, halfStepNumber, 1);
-		}
-
-		function playScaleTypeByHalfStepNumberWithNoteDuration(
-			scaleType,
-			halfStepNumber,
-			noteDuration
-		) {
-			var scaleFrequencies = 
-			  constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber);
-
-			playScaleWithNoteDuration(scaleFrequencies, noteDuration);
-		}
-
-		function playScaleWithNoteDuration(scaleFrequencies, noteDuration) {
-			var timeCounter = 0
-			for (var i = 0; i < scaleFrequencies.length; i++) {
-				playFrequencyAtFutureTimeForDuration(
-					scaleFrequencies[i],
-					timeCounter*noteDuration,
-					noteDuration
+			var cues = new Array();
+			var noteLength = 2;
+			for (var i = 0; i < scale.length; i++) {
+				instrument.playNotesAtCue(
+					chords[i], 
+					new HSC.Cue(noteLength, i*noteLength)
 				);
-				timeCounter++;
-			}
-
-			for (var i = scaleFrequencies.length - 2; i > -1; i--) {
-				playFrequencyAtFutureTimeForDuration(
-					scaleFrequencies[i],
-					timeCounter*noteDuration,
-					noteDuration
-				);
-				timeCounter++;
 			}
 		}
 
-		function playFrequency(frequency) {
-			playFrequencyAtFutureTimeForDuration(frequency,0,1);
-		}
+		// function playScaleTypeByOctaveAndName(scaleType, octave, name) {
+		// 	playScaleTypeByOctaveAndNameWithNoteDuration(scaleType, octave, name, 1);
+		// }
 
-		function playFrequencyForDuration(frequency, duration) {
-			playFrequencyAtFutureTimeForDuration(frequency,0,duration);
-		}
+		// function playScaleTypeByOctaveAndNameWithNoteDuration(
+		// 	scaleType,
+		// 	octave,
+		// 	name,
+		// 	noteDuration
+	 //  ) {
+		// 	var scaleFrequencies = 
+		// 	  constructScaleByScaleTypeOctaveAndName(scaleType, octave, name);
 
-		function playFrequencyAtFutureTime(frequency, futureTime) {
-			playFrequencyAtFutureTimeForDuration(frequency,futureTime,1);
-		}
+		// 	playScaleWithNoteDuration(scaleFrequencies, noteDuration);
+		// }
 
-		function playFrequencyAtFutureTimeForDuration(frequency, futureTime, duration) {
-			var oscillatorNode = audioContext.createOscillator();
-			oscillatorNode.frequency.value = frequency;
+		// function playScaleTypeByHalfStepNumber(scaleType, halfStepNumber) {
+		// 	playScaleTypeByHalfStepNumberWithNoteDuration(scaleType, halfStepNumber, 1);
+		// }
 
-			var gainNode = audioContext.createGain();
-			//gainNode.gain.value = 0.1;
-			gainNode.gain.linearRampToValueAtTime(0.0, audioContext.currentTime + futureTime);
-			gainNode.gain.linearRampToValueAtTime(
-				0.1, 
-				audioContext.currentTime + futureTime + 0.01
-		  );
-			gainNode.gain.linearRampToValueAtTime(
-				0.1, 
-				audioContext.currentTime + futureTime + duration - 0.01
-			);
-			gainNode.gain.linearRampToValueAtTime(
-				0.0, 
-				audioContext.currentTime + futureTime + duration
-			);
+		// function playScaleTypeByHalfStepNumberWithNoteDuration(
+		// 	scaleType,
+		// 	halfStepNumber,
+		// 	noteDuration
+		// ) {
+		// 	var scaleFrequencies = 
+		// 	  constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber);
 
-			oscillatorNode.connect(gainNode);
-			gainNode.connect(dynamicsCompressorNode);
-			gainNode.connect(audioContext.destination);
+		// 	playScaleWithNoteDuration(scaleFrequencies, noteDuration);
+		// }
 
-			oscillatorNode.start(audioContext.currentTime + futureTime,0,duration);
-			console.log("StartNote:" + (audioContext.currentTime + futureTime));
-			oscillatorNode.stop(audioContext.currentTime + futureTime + duration);
-			console.log("StopNote:" + (audioContext.currentTime + futureTime + duration) + "(" 
-				+ audioContext.currentTime + "," + futureTime + "," + duration + ")");
-		}
+		// function playScaleWithNoteDuration(scaleFrequencies, noteDuration) {
+		// 	var timeCounter = 0
+		// 	for (var i = 0; i < scaleFrequencies.length; i++) {
+		// 		playFrequencyAtFutureTimeForDuration(
+		// 			scaleFrequencies[i],
+		// 			timeCounter*noteDuration,
+		// 			noteDuration
+		// 		);
+		// 		timeCounter++;
+		// 	}
 
-		function playFrequencyAtFutureTimeForDurationWithCurrentTime(
-			frequency,
-			futureTime,
-			duration,
-			currentTime
-		) {
-			var oscillatorNode = audioContext.createOscillator();
-			oscillatorNode.frequency.value = frequency;
+		// 	for (var i = scaleFrequencies.length - 2; i > -1; i--) {
+		// 		playFrequencyAtFutureTimeForDuration(
+		// 			scaleFrequencies[i],
+		// 			timeCounter*noteDuration,
+		// 			noteDuration
+		// 		);
+		// 		timeCounter++;
+		// 	}
+		// }
 
-			var gainNode = audioContext.createGain();
-			//gainNode.gain.value = 0.1;
-			gainNode.gain.linearRampToValueAtTime(0.0, currentTime + futureTime);
-			gainNode.gain.linearRampToValueAtTime(
-				0.1, 
-				currentTime + futureTime + duration * 1/10
-			);
-			gainNode.gain.linearRampToValueAtTime(
-				0.1, 
-				currentTime + futureTime + duration * 9/10
-			);
-			gainNode.gain.linearRampToValueAtTime(0.0, currentTime + futureTime + duration);
+		
 
-			oscillatorNode.connect(gainNode);
-			gainNode.connect(dynamicsCompressorNode);
-			gainNode.connect(audioContext.destination);
+		// function constructScaleByScaleTypeOctaveAndName(scaleType, octave, name) {
+		// 	var halfStepNumber = notesByOctaveAndName[octave][name].HalfStepNumber;
 
-			oscillatorNode.start(currentTime + futureTime,0,duration);
-			oscillatorNode.stop(currentTime + futureTime + duration);
-		}
+		// 	return constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber);
+		// }
 
-		function constructScaleByScaleTypeOctaveAndName(scaleType, octave, name) {
-			var halfStepNumber = notesByOctaveAndName[octave][name].HalfStepNumber;
+		// function constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber) {
+		// 	var vHalfStepNumber = validateHalfStepNumber(halfStepNumber);
+		// 	if (vHalfStepNumber == null) return [0,0,0,0,0,0,0];
 
-			return constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber);
-		}
+		// 	var scaleTemplate = getScaleTemplateByScaleType(scaleType);
+		// 	var scale = new Array();
+		// 	var currentHalfStepNumber = vHalfStepNumber;
+		// 	scale.push(getNoteFrequencyByHalfStepNumber(currentHalfStepNumber));
 
-		function constructScaleByScaleTypeAndHalfStepNumber(scaleType, halfStepNumber) {
-			var vHalfStepNumber = validateHalfStepNumber(halfStepNumber);
-			if (vHalfStepNumber == null) return [0,0,0,0,0,0,0];
+		// 	for (var i = 0; i < scaleTemplate.length; i++) {
+		// 		currentHalfStepNumber += scaleTemplate[i];
 
-			var scaleTemplate = getScaleTemplateByScaleType(scaleType);
-			var scale = new Array();
-			var currentHalfStepNumber = vHalfStepNumber;
-			scale.push(getNoteFrequencyByHalfStepNumber(currentHalfStepNumber));
+		// 		if (validateHalfStepNumber(currentHalfStepNumber) == null) {
+		// 			scale.push(0);
+		// 		}
+		// 		else {
+		// 			scale.push(getNoteFrequencyByHalfStepNumber(currentHalfStepNumber));
+		// 		}
+		// 	}
 
-			for (var i = 0; i < scaleTemplate.length; i++) {
-				currentHalfStepNumber += scaleTemplate[i];
+		// 	return scale;
+		// }
 
-				if (validateHalfStepNumber(currentHalfStepNumber) == null) {
-					scale.push(0);
-				}
-				else {
-					scale.push(getNoteFrequencyByHalfStepNumber(currentHalfStepNumber));
-				}
-			}
+		// function getNoteFrequencyByOctaveAndName(octave, name) {
+		// 	var vOctave = validateNoteOctave(octave);
+		// 	if (vOctave == null) return 0;
 
-			return scale;
-		}
-
-		function getNoteFrequencyByOctaveAndName(octave, name) {
-			var vOctave = validateNoteOctave(octave);
-			if (vOctave == null) return 0;
-
-			//var vLetter = validateNoteLetter(octave,letter);
-			var vName = validateNoteName(octave, name);
-			if (vName == null) return 0;
+		// 	//var vLetter = validateNoteLetter(octave,letter);
+		// 	var vName = validateNoteName(octave, name);
+		// 	if (vName == null) return 0;
 			
-			//return noteFrequencyByOctaveAndLetter[octave][letter];
-			return notesByOctaveAndName[vOctave][vName].Frequency;
+		// 	//return noteFrequencyByOctaveAndLetter[octave][letter];
+		// 	return notesByOctaveAndName[vOctave][vName].Frequency;
 
-		}
+		// }
 
-		function getNoteFrequencyByHalfStepNumber(halfStepNumber) {
-			var vHalfStepNumber = validateHalfStepNumber(halfStepNumber);
-			if (vHalfStepNumber == null) return 0;
+		// function validateNoteName(octave, letterAndSign) {
+		// 	var normalName;
+		// 	switch(letterAndSign) {
+		// 		case 'C':
+		// 		case 'C#':
+		// 		case 'Db':
+		// 		case 'D':
+		// 		case 'D#':
+		// 		case 'Eb':
+		// 		case 'E':
+		// 		case 'F':
+		// 		case 'F#':
+		// 		case 'Gb':
+		// 		case 'G':
+		// 		case 'G#':
+		// 		case 'Ab':
+		// 		case 'A':
+		// 		case 'A#':
+		// 		case 'Bb':
+		// 		case 'B':
+		// 			normalName = letterAndSign;
+		// 			break;
 
-			return notesByHalfStepNumber[halfStepNumber][0].Frequency;
-		}
+		// 		case 'Cb':
+		// 			normalName = 'B';
+		// 			break;
 
-		function getScaleTemplateByScaleType(scaleType) {
-			var vScaleType = validateScaleType(scaleType);
-			if (vScaleType == null) return [0,0,0,0,0,0,0];
+		// 		case 'E#':
+		// 			normalName = 'F';
+		// 			break;
 
-			var scaleTemplate;
+		// 		case 'Fb':
+		// 			normalName = 'E';
+		// 			break;
 
-			switch(scaleType) {
-				case SCALETYPE.CHROMATIC:
-					scaleTemplate = chromaticScaleTemplate;
-					break; 
+		// 		case 'B#':
+		// 			normalName = 'C';
+		// 			break;
 
-				case SCALETYPE.MAJOR:
-					scaleTemplate = majorScaleTemplate;
-					break;
+		// 		case 'Cbb':
+		// 			normalName = 'Bb';
+		// 			break;
 
-				case SCALETYPE.MINOR_NATURAL:
-					scaleTemplate = minorNaturalScaleTemplate;
-					break;
+		// 		case 'C##':
+		// 			normalName = 'D';
+		// 			break;
 
-				case SCALETYPE.MINOR_HARMONIC:
-					scaleTemplate = minorHarmonicScaleTemplate;
-					break;
+		// 		case 'Dbb':
+		// 			normalName = 'C';
+		// 			break;
 
-				case SCALETYPE.MINOR_MELODIC:
-					scaleTemplate = minorMelodicScaleTemplate;
-					break;
-			}
+		// 		case 'D##':
+		// 			normalName = 'E';
+		// 			break;
 
-			return scaleTemplate;
-		}
+		// 		case 'Ebb':
+		// 			normalName = 'D';
+		// 			break;
 
-		function validateScaleType(scaleType) {
-			var validatedScaleType;
+		// 		case 'E##':
+		// 			normalName = 'F#';
+		// 			break;
 
-			switch(scaleType) {
-				case SCALETYPE.CHROMATIC:
-				case SCALETYPE.MAJOR:
-				case SCALETYPE.MINOR_NATURAL:
-				case SCALETYPE.MINOR_HARMONIC:
-				case SCALETYPE.MINOR_MELODIC:
-					validatedScaleType = scaleType;
-					break;
-			}
+		// 		case 'Fbb':
+		// 			normalName = 'Eb';
+		// 			break;
 
-			return validateScaleType;
-		}
+		// 		case 'F##':
+		// 			normalName = 'G';
+		// 			break;
 
-		function validateNoteName(octave, letterAndSign) {
-			var normalName;
-			switch(letterAndSign) {
-				case 'C':
-				case 'C#':
-				case 'Db':
-				case 'D':
-				case 'D#':
-				case 'Eb':
-				case 'E':
-				case 'F':
-				case 'F#':
-				case 'Gb':
-				case 'G':
-				case 'G#':
-				case 'Ab':
-				case 'A':
-				case 'A#':
-				case 'Bb':
-				case 'B':
-					normalName = letterAndSign;
-					break;
+		// 		case 'Gbb':
+		// 			normalName = 'F';
+		// 			break;
 
-				case 'Cb':
-					normalName = 'B';
-					break;
+		// 		case 'G##':
+		// 			normalName = 'A';
+		// 			break;
 
-				case 'E#':
-					normalName = 'F';
-					break;
+		// 		case 'Abb':
+		// 			normalName = 'G';
+		// 			break;
 
-				case 'Fb':
-					normalName = 'E';
-					break;
+		// 		case 'A##':
+		// 			normalName = 'B';
+		// 			break;
 
-				case 'B#':
-					normalName = 'C';
-					break;
+		// 		case 'Bbb':
+		// 			normalName = 'A';
+		// 			break;
 
-				case 'Cbb':
-					normalName = 'Bb';
-					break;
+		// 		case 'B##':
+		// 			normalName = 'C#';
+		// 			break;
 
-				case 'C##':
-					normalName = 'D';
-					break;
+		// 		default:
+		// 			break;
+		// 	}
 
-				case 'Dbb':
-					normalName = 'C';
-					break;
+		// 	var validatedName;
+		// 	if (notesByOctaveAndName[octave][normalName] != null) {
+		// 		validatedName = normalName;
+		// 	}
 
-				case 'D##':
-					normalName = 'E';
-					break;
+		// 	return validatedName;
+		// }
 
-				case 'Ebb':
-					normalName = 'D';
-					break;
+		// function validateNoteOctave(octave) {
+		// 	var validatedOctave;
 
-				case 'E##':
-					normalName = 'F#';
-					break;
+		// 	if (notesByOctaveAndName[octave] != null) {
+		// 		validatedOctave = octave;
+		// 	}
 
-				case 'Fbb':
-					normalName = 'Eb';
-					break;
+		// 	return validatedOctave;
+		// }
 
-				case 'F##':
-					normalName = 'G';
-					break;
+		// function validateHalfStepNumber(halfStepNumber) {
+		// 	var validatedHalfStepNumber;
 
-				case 'Gbb':
-					normalName = 'F';
-					break;
+		// 	if (notesByHalfStepNumber[halfStepNumber] != null) {
+		// 		validatedHalfStepNumber = halfStepNumber;
+		// 	}
 
-				case 'G##':
-					normalName = 'A';
-					break;
-
-				case 'Abb':
-					normalName = 'G';
-					break;
-
-				case 'A##':
-					normalName = 'B';
-					break;
-
-				case 'Bbb':
-					normalName = 'A';
-					break;
-
-				case 'B##':
-					normalName = 'C#';
-					break;
-
-				default:
-					break;
-			}
-
-			var validatedName;
-			if (notesByOctaveAndName[octave][normalName] != null) {
-				validatedName = normalName;
-			}
-
-			return validatedName;
-		}
-
-		function validateNoteOctave(octave) {
-			var validatedOctave;
-
-			if (notesByOctaveAndName[octave] != null) {
-				validatedOctave = octave;
-			}
-
-			return validatedOctave;
-		}
-
-		function validateHalfStepNumber(halfStepNumber) {
-			var validatedHalfStepNumber;
-
-			if (notesByHalfStepNumber[halfStepNumber] != null) {
-				validatedHalfStepNumber = halfStepNumber;
-			}
-
-			return validatedHalfStepNumber;
-		}
+		// 	return validatedHalfStepNumber;
+		// }
 
 		function getObjectSize(obj) {
 			var size = 0, key;
@@ -817,9 +512,11 @@
 
 <body>
 	<p id="buttons">
-		<button onclick="playRandomScale();">Play Random Scale</button>
-		<button onclick="playRandomMeasures(4);">Play 4 Random Measures</button>
-		<button onclick="playRandomMeasures(4);playRandomMeasures(4);">Play a pair of 4 Random Measures in parallel</button>
+		<button onclick="playCMajorScale();">Play C Major Scale</button>
+		<button onclick="playRandomCScale();">Play Random C Scale</button>
+		<button onclick="playDiatonicTriadsByOctaveAndName(4, 'C');">
+			Play Diatonic Triads in C
+		</button>
 	</p>
 	<canvas id="freqcanvas" width="800" height="256" ></canvas>
 </body>
