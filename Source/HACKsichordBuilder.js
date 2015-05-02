@@ -1,24 +1,4 @@
 var HSC = (function(hsc) {
-	hsc.buildTriad = function(note, triadType) {
-		if (!(note instanceof hsc.Note)) {
-    	throw "The first parameter of HSC.buildTriad() must be an " +
-    	  "HSC.Note object; something else was passed in.";
-    }
-    if (triadType == undefined) {
-    	triadType = hsc.TriadType.MAJOR;
-    }
-
-    var triadTemplate = hsc.getTriadTemplate(triadType);
-    var triad = new Array(note);
-
-    for (var i = 0; i < triadTemplate.length; i++) {
-			triad.push(hsc.getNoteByHalfStepNumber(
-        note.HalfStepNumber + triadTemplate[i]
-      ));
-		}
-		return triad;
-	};
-
   hsc.buildDiatonicTriad = function(note, diatonicTriadType) {
     if (!(note instanceof hsc.Note)) {
       throw "The first parameter of HSC.buildDiatonicTriad() must be an " +

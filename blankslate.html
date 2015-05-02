@@ -81,7 +81,9 @@
 		    requestAnimFrame(drawSpectrogram);
 		  }
 
-			instrument = new HSC.Instrument(audioContext);
+			instrument = new HSC.Instrument(audioContext, "square");
+			//instrument.setVibrato(0.5, 2);
+			instrument.setFiltering(15, 2, 20, 5);
 		}
 
 		function setupAudioNodes() {
@@ -227,7 +229,7 @@
 				cues[i] = new HSC.Cue(noteLength, i*noteLength);
 			}
 
-			instrument.playNotesAtCues(scale, cues);
+			instrument.playNotesAtCues(scale, cues, 1);
 		}
 
 		function playRandomCScale() {
@@ -242,7 +244,7 @@
 				cues[i] = new HSC.Cue(noteLength, i*noteLength);
 			}
 
-			instrument.playNotesAtCues(scale, cues);
+			instrument.playNotesAtCues(scale, cues, 0.1);
 		}		
 
 		function playDiatonicTriadsByOctaveAndName(octave, name) {
@@ -270,7 +272,8 @@
 			for (var i = 0; i < scale.length; i++) {
 				instrument.playNotesAtCue(
 					chords[i], 
-					new HSC.Cue(noteLength, i*noteLength)
+					new HSC.Cue(noteLength, i*noteLength),
+					0.1
 				);
 			}
 		}

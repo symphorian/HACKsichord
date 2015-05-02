@@ -110,14 +110,11 @@ var HSC = (function(hsc) {
 	  augmentedTriadChordTemplate.concat([major7thInterval]);
 	var augmented7thChordTemplate = augmentedTriadChordTemplate.concat([minor7thInterval]);
 
-  hsc.TriadType = Object.freeze({
-  	MAJOR: 'major',
-		MINOR: 'minor',
-		AUGMENTED: 'augmented',
-		DIMINISHED: 'diminished'
-  });
-
   hsc.ChordType = Object.freeze({
+  	MAJOR_TRIAD: 'major',
+		MINOR_TRIAD: 'minor',
+		AUGMENTED_TRIAD: 'augmented',
+		DIMINISHED_TRIAD: 'diminished',
     DOMINANT_SEVENTH: 'dominant7th',
     MAJOR_SEVENTH: 'major7th',
     MINOR_SEVENTH: 'minor7th',
@@ -168,11 +165,32 @@ var HSC = (function(hsc) {
 
 	hsc.DiatonicTriadType = Object.freeze({
 		I: 'I',
+		It: 'I+',
+		i: 'i',
+		io: 'io',
+		II: 'II',
+		IIt: 'II+',
 		ii: 'ii',
+		iio: 'iio',
+		III: 'III',
+		IIIt: 'III+',
 		iii: 'iii',
+		iiio: 'iiio',
 		IV: 'IV',
+		IVt: 'IV+',
+		iv: 'iv',
+		ivo: 'ivo',
 		V: 'V',
+		Vt: 'V+',
+		v: 'v',
+		vo: 'vo',
+		VI: 'VI',
+		VIt: 'VI+',
 		vi: 'vi',
+		vio: 'vio',
+		VII: 'VII',
+		VIIt: 'VII+',
+		vii: 'vii',
 		viio: 'viio'
 	});
 
@@ -255,28 +273,6 @@ var HSC = (function(hsc) {
 		}
 	}
 
-	hsc.getTriadTemplate = function(triadType) {
-    var vTriadType = validateTriadType(triadType);
-    if (vTriadType == null) return [0, 0];
-
-    switch(triadType) {
-    	case hsc.TriadType.MAJOR:
-    	  return majorTriadChordTemplate;
-
-    	case hsc.TriadType.MINOR:
-    	  return minorTriadChordTemplate;
-
-    	case hsc.TriadType.AUGMENTED:
-    	  return augmentedTriadChordTemplate;
-
-    	case hsc.TriadType.DIMINISHED:
-    	  return diminishedTriadChordTemplate;
-
-    	default: 
-    	  return [0, 0];
-    }
-	}
-
 	hsc.getTriadTemplateForDiatonicTriadType = function(diatonicTriadType) {
     var vDiatonicTriadType = validateDiatonicTriadType(diatonicTriadType);
     if (vDiatonicTriadType == null) return [0, 0];
@@ -284,31 +280,43 @@ var HSC = (function(hsc) {
     var triadType;
     switch(diatonicTriadType) {
     	case hsc.DiatonicTriadType.I:
-    	  triadType = hsc.TriadType.MAJOR;
-    	  break;
-
-    	case hsc.DiatonicTriadType.ii:
-    	  triadType = hsc.TriadType.MINOR;
-    	  break;
-
-    	case hsc.DiatonicTriadType.iii:
-    	  triadType = hsc.TriadType.MINOR;
-    	  break;
-
+    	case hsc.DiatonicTriadType.II:
+    	case hsc.DiatonicTriadType.III:
     	case hsc.DiatonicTriadType.IV:
-    	  triadType = hsc.TriadType.MAJOR;
-    	  break;
-
     	case hsc.DiatonicTriadType.V:
-    	  triadType = hsc.TriadType.MAJOR;
+    	case hsc.DiatonicTriadType.VI:
+    	case hsc.DiatonicTriadType.VII:
+    	  triadType = hsc.ChordType.MAJOR_TRIAD;
     	  break;
 
+    	case hsc.DiatonicTriadType.It:
+    	case hsc.DiatonicTriadType.IIt:
+    	case hsc.DiatonicTriadType.IIIt:
+    	case hsc.DiatonicTriadType.IVt:
+    	case hsc.DiatonicTriadType.Vt:
+    	case hsc.DiatonicTriadType.VIt:
+    	case hsc.DiatonicTriadType.VIIt:
+    	  triadType = hsc.ChordType.AUGMENTED_TRIAD;
+    	  break;
+
+    	case hsc.DiatonicTriadType.i:
+    	case hsc.DiatonicTriadType.ii:
+    	case hsc.DiatonicTriadType.iii:
+    	case hsc.DiatonicTriadType.iv:
+    	case hsc.DiatonicTriadType.v:
     	case hsc.DiatonicTriadType.vi:
-    	  triadType = hsc.TriadType.MINOR;
+    	case hsc.DiatonicTriadType.vii:
+    	  triadType = hsc.ChordType.MINOR_TRIAD;
     	  break;
 
+      case hsc.DiatonicTriadType.io:
+      case hsc.DiatonicTriadType.iio:
+      case hsc.DiatonicTriadType.iiio:
+      case hsc.DiatonicTriadType.ivo:
+      case hsc.DiatonicTriadType.vo:
+      case hsc.DiatonicTriadType.vio:
     	case hsc.DiatonicTriadType.viio:
-    	  triadType = hsc.TriadType.DIMINISHED;
+    	  triadType = hsc.ChordType.DIMINISHED_TRIAD;
     	  break;
     }
 
@@ -316,7 +324,7 @@ var HSC = (function(hsc) {
     	return [0, 0];
     }
 
-    return hsc.getTriadTemplate(triadType);
+    return hsc.getChordTemplate(triadType);
 	}
 
 	hsc.getChordTemplate = function(chordType) {
@@ -324,6 +332,18 @@ var HSC = (function(hsc) {
     if (vChordType == null) return [0, 0, 0];
 
     switch(chordType) {
+    	case hsc.ChordType.MAJOR_TRIAD:
+    	  return majorTriadChordTemplate;
+
+    	case hsc.ChordType.MINOR_TRIAD:
+    	  return minorTriadChordTemplate;
+
+    	case hsc.ChordType.AUGMENTED_TRIAD:
+    	  return augmentedTriadChordTemplate;
+
+    	case hsc.ChordType.DIMINISHED_TRIAD:
+    	  return diminishedTriadChordTemplate;
+
     	case hsc.ChordType.DOMINANT_SEVENTH:
     	  return dominant7thChordTemplate;
 
@@ -413,22 +433,13 @@ var HSC = (function(hsc) {
 		return validatedIntervalType;
 	}
 
-	function validateTriadType(triadType) {
-		var validatedTriadType;
-		switch(triadType) {
-			case hsc.TriadType.MAJOR:
-			case hsc.TriadType.MINOR:
-			case hsc.TriadType.AUGMENTED:
-			case hsc.TriadType.DIMINISHED:
-			  validatedTriadType = triadType;
-			  break;
-		}
-		return validatedTriadType;
-	}
-
 	function validateChordType(chordType) {
 		var validatedChordType;
 		switch(chordType) {
+			case hsc.ChordType.MAJOR_TRIAD:
+			case hsc.ChordType.MINOR_TRIAD:
+			case hsc.ChordType.AUGMENTED_TRIAD:
+			case hsc.ChordType.DIMINISHED_TRIAD:
 			case hsc.ChordType.DOMINANT_SEVENTH:
       case hsc.ChordType.MAJOR_SEVENTH:
       case hsc.ChordType.MINOR_SEVENTH:
