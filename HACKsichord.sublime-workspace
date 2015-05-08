@@ -4,6 +4,110 @@
 		"selected_items":
 		[
 			[
+				"return",
+				"return"
+			],
+			[
+				"IV",
+				"IV"
+			],
+			[
+				"ii",
+				"ii"
+			],
+			[
+				"II",
+				"III"
+			],
+			[
+				"cut",
+				"cutoffFrequency"
+			],
+			[
+				"low",
+				"lowPassFilter"
+			],
+			[
+				"Has",
+				"hasFiltering"
+			],
+			[
+				"Max",
+				"FilterMaxGain"
+			],
+			[
+				"freq",
+				"frequency"
+			],
+			[
+				"peaking",
+				"peakingFilter"
+			],
+			[
+				"max",
+				"maxQ"
+			],
+			[
+				"Filter",
+				"FilterFrequencyModifier"
+			],
+			[
+				"FilterMax",
+				"FilterMaxQ"
+			],
+			[
+				"Fil",
+				"FilterAmplitudeModifier"
+			],
+			[
+				"LowPas",
+				"LowPassAmplitudeModifier"
+			],
+			[
+				"Vibr",
+				"VibratoValue"
+			],
+			[
+				"in",
+				"instrument"
+			],
+			[
+				"vib",
+				"vibratoGainNode"
+			],
+			[
+				"Vi",
+				"VibratoFrequency"
+			],
+			[
+				"Vib",
+				"VibratoValue"
+			],
+			[
+				"au",
+				"AudioContext"
+			],
+			[
+				"V",
+				"VibratoValue"
+			],
+			[
+				"decay",
+				"decayDuration"
+			],
+			[
+				"at",
+				"attackDuration"
+			],
+			[
+				"attack",
+				"attackVolume"
+			],
+			[
+				"Att",
+				"AttackDuration"
+			],
+			[
 				"tri",
 				"triadTemplate"
 			],
@@ -410,110 +514,6 @@
 			[
 				"CA",
 				"CANVASMANAGER"
-			],
-			[
-				"currentm",
-				"currentMemoryIndex"
-			],
-			[
-				"pr",
-				"prototype"
-			],
-			[
-				"memo",
-				"memory"
-			],
-			[
-				"curre",
-				"currentFrameIndex"
-			],
-			[
-				"getn",
-				"getNthLatestMemory"
-			],
-			[
-				"lastKeyna",
-				"lastKeyNamePress"
-			],
-			[
-				"lastKeyc",
-				"lastKeyCodePress"
-			],
-			[
-				"rotat",
-				"rotationAcc"
-			],
-			[
-				"roat",
-				"rotationVel"
-			],
-			[
-				"mem",
-				"memoryCapacity"
-			],
-			[
-				"new",
-				"newestMemoryIndex"
-			],
-			[
-				"or",
-				"originY"
-			],
-			[
-				"ori",
-				"originX"
-			],
-			[
-				"origi",
-				"originY"
-			],
-			[
-				"orig",
-				"originY"
-			],
-			[
-				"lastkey",
-				"lastKeyCodeUp"
-			],
-			[
-				"key",
-				"keyCode"
-			],
-			[
-				"isk",
-				"isKeyCodeLowercase"
-			],
-			[
-				"is",
-				"isKeyCodeUppercase"
-			],
-			[
-				"offset",
-				"offsetHeight"
-			],
-			[
-				"append",
-				"appendChild"
-			],
-			[
-				"auio",
-				"audioXMLfilename"
-			],
-			[
-				"loadI",
-				"loadAudioAssetXML"
-			],
-			[
-				"audioasse",
-				"audioAssetsFound"
-			],
-			[
-				"loadImag",
-				"loadImageAssetXML"
-			],
-			[
-				"imageass",
-				"imageAssetsFound"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "blankslate.html",
 			"settings":
 			{
-				"buffer_size": 14742,
+				"buffer_size": 20426,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "Source/HACKsichordBuilder.js",
 			"settings":
 			{
-				"buffer_size": 2825,
+				"buffer_size": 2264,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "Source/HACKsichordInstrument.js",
 			"settings":
 			{
-				"buffer_size": 2371,
+				"buffer_size": 6830,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "Source/HACKsichordDefinitions.js",
 			"settings":
 			{
-				"buffer_size": 13318,
+				"buffer_size": 16103,
 				"line_ending": "Windows"
 			}
 		},
@@ -868,15 +868,15 @@
 					"file": "blankslate.html",
 					"settings":
 					{
-						"buffer_size": 14742,
+						"buffer_size": 20426,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								176,
-								176
+								361,
+								361
 							]
 						],
 						"settings":
@@ -896,15 +896,15 @@
 					"file": "Source/HACKsichordBuilder.js",
 					"settings":
 					{
-						"buffer_size": 2825,
+						"buffer_size": 2264,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1201,
-								1201
+								529,
+								529
 							]
 						],
 						"settings":
@@ -922,7 +922,7 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -930,15 +930,15 @@
 					"file": "Source/HACKsichordInstrument.js",
 					"settings":
 					{
-						"buffer_size": 2371,
+						"buffer_size": 6830,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1231,
-								1230
+								3931,
+								3931
 							]
 						],
 						"settings":
@@ -957,15 +957,15 @@
 					"file": "Source/HACKsichordDefinitions.js",
 					"settings":
 					{
-						"buffer_size": 13318,
+						"buffer_size": 16103,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13194,
-								13194
+								15888,
+								15888
 							]
 						],
 						"settings":
@@ -974,7 +974,7 @@
 							"tab_size": 2
 						},
 						"translation.x": 0.0,
-						"translation.y": 6509.0,
+						"translation.y": 7648.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1118,7 +1118,7 @@
 		"cols":
 		[
 			0.0,
-			0.515574829424,
+			0.482192040106,
 			1.0
 		],
 		"rows":

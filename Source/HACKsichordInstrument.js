@@ -142,13 +142,21 @@ var HSC = (function(hsc) {
 
 			lowPassFilter = this.AudioContext.createBiquadFilter();
 			lowPassFilter.type = "lowpass";
-			lowPassFilter.frequency = cutoffFrequency;
+			lowPassFilter.frequency.value = cutoffFrequency;
+
+			console.log("frequency: " + note.Frequency);
+			console.log("lowpass cutoff frequency: " + lowPassFilter.frequency.value);
 
 			peakingFilter = this.AudioContext.createBiquadFilter();
 			peakingFilter.type = "peaking";
-			peakingFilter.frequency = cutoffFrequency / Math.pow(2, 7);
-			peakingFilter.gain = this.FilterMaxGain * (1 - volume);
-			peakingFilter.Q = this.FilterMaxQ * (1 - volume);
+			peakingFilter.frequency.value = cutoffFrequency / Math.pow(2, 7);
+			peakingFilter.gain.value = this.FilterMaxGain * (1.0 - volume);
+			peakingFilter.Q.value = this.FilterMaxQ * (1.0 - volume);
+
+			console.log("volume: " + volume);
+			console.log("peaking frequency: " + peakingFilter.frequency.value);
+			console.log("peaking Q: " + peakingFilter.Q.value);
+			console.log("peaking gain: " + peakingFilter.gain.value);
 		}
 		
 		var gainNode = this.AudioContext.createGain();

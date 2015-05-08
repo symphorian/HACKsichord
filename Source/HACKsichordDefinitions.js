@@ -327,6 +327,55 @@ var HSC = (function(hsc) {
     return hsc.getChordTemplate(triadType);
 	}
 
+	hsc.getScaleNoteNumberFromDiatonicTriadType = function(diatonicTriadType) {
+		var vDiatonicTriadType = validateDiatonicTriadType(diatonicTriadType);
+    if (vDiatonicTriadType == null) return 1;
+
+    switch (vDiatonicTriadType) {
+    	case hsc.DiatonicTriadType.I:
+    	case hsc.DiatonicTriadType.It:
+    	case hsc.DiatonicTriadType.i:
+    	case hsc.DiatonicTriadType.io:
+    	  return 1;
+
+    	case hsc.DiatonicTriadType.II:
+    	case hsc.DiatonicTriadType.IIt:
+    	case hsc.DiatonicTriadType.ii:
+    	case hsc.DiatonicTriadType.iio:
+    	  return 2;
+    	  
+    	case hsc.DiatonicTriadType.III:
+    	case hsc.DiatonicTriadType.IIIt:
+    	case hsc.DiatonicTriadType.iii:
+    	case hsc.DiatonicTriadType.iiio:
+    	  return 3;
+    	  
+    	case hsc.DiatonicTriadType.IV:
+    	case hsc.DiatonicTriadType.IVt:
+    	case hsc.DiatonicTriadType.iv:
+    	case hsc.DiatonicTriadType.ivo:
+    	  return 4;
+    	  
+    	case hsc.DiatonicTriadType.V:
+    	case hsc.DiatonicTriadType.Vt:
+    	case hsc.DiatonicTriadType.v:
+    	case hsc.DiatonicTriadType.vo:
+    	  return 5;
+    	  
+    	case hsc.DiatonicTriadType.VI:
+    	case hsc.DiatonicTriadType.VIt:
+    	case hsc.DiatonicTriadType.vi:
+    	case hsc.DiatonicTriadType.vio:
+    	  return 6;
+    	  
+    	case hsc.DiatonicTriadType.VII:
+    	case hsc.DiatonicTriadType.VIIt:
+    	case hsc.DiatonicTriadType.vii:
+    	case hsc.DiatonicTriadType.viio:
+    	  return 7;            
+    }
+	}
+
 	hsc.getChordTemplate = function(chordType) {
     var vChordType = validateChordType(chordType);
     if (vChordType == null) return [0, 0, 0];
@@ -471,13 +520,34 @@ var HSC = (function(hsc) {
 	function validateDiatonicTriadType(diatonicTriadType) {
 		var validatedDiatonicTriadType;
 		switch(diatonicTriadType) {
-			case hsc.DiatonicTriadType.I:
-			case hsc.DiatonicTriadType.ii:
-			case hsc.DiatonicTriadType.iii:
-			case hsc.DiatonicTriadType.IV:
-			case hsc.DiatonicTriadType.V:
-			case hsc.DiatonicTriadType.vi:
-			case hsc.DiatonicTriadType.viio:
+    	case hsc.DiatonicTriadType.I:
+    	case hsc.DiatonicTriadType.II:
+    	case hsc.DiatonicTriadType.III:
+    	case hsc.DiatonicTriadType.IV:
+    	case hsc.DiatonicTriadType.V:
+    	case hsc.DiatonicTriadType.VI:
+    	case hsc.DiatonicTriadType.VII:
+    	case hsc.DiatonicTriadType.It:
+    	case hsc.DiatonicTriadType.IIt:
+    	case hsc.DiatonicTriadType.IIIt:
+    	case hsc.DiatonicTriadType.IVt:
+    	case hsc.DiatonicTriadType.Vt:
+    	case hsc.DiatonicTriadType.VIt:
+    	case hsc.DiatonicTriadType.VIIt:
+    	case hsc.DiatonicTriadType.i:
+    	case hsc.DiatonicTriadType.ii:
+    	case hsc.DiatonicTriadType.iii:
+    	case hsc.DiatonicTriadType.iv:
+    	case hsc.DiatonicTriadType.v:
+    	case hsc.DiatonicTriadType.vi:
+    	case hsc.DiatonicTriadType.vii:
+      case hsc.DiatonicTriadType.io:
+      case hsc.DiatonicTriadType.iio:
+      case hsc.DiatonicTriadType.iiio:
+      case hsc.DiatonicTriadType.ivo:
+      case hsc.DiatonicTriadType.vo:
+      case hsc.DiatonicTriadType.vio:
+    	case hsc.DiatonicTriadType.viio:
 			  validatedDiatonicTriadType = diatonicTriadType;
 			  break;
 		}
