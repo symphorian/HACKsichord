@@ -23,7 +23,8 @@
 	<script type="text/javascript" src="Source/HACKsichordDefinitions.js"></script>
 	<script type="text/javascript" src="Source/HACKsichordNotes.js"></script>
 	<script type="text/javascript" src="Source/HACKsichordKeySignatures.js"></script>
-	<script type="text/javascript" src="Source/HACKsichordInstrument.js"></script>
+	<!--<script type="text/javascript" src="Source/HACKsichordInstrument.js"></script>-->
+	<script type="text/javascript" src="Source/HACKsichordInstrument2.js"></script>
 	<script type="text/javascript" src="Source/HACKsichordBuilder.js"></script>
 	<script type="text/javascript">
 		window.AudioContext = (function() {
@@ -88,9 +89,14 @@
 		    requestAnimFrame(drawSpectrogram);
 		  }
 
-			instrument = new HSC.Instrument(audioContext, "square");
-			//instrument.setVibrato(0.5, 2);
-			instrument.setFiltering(1.0, 2.0, 15.0, 0.01);
+			// // instrument = new HSC.Instrument(audioContext, "square");
+			// // //instrument.setVibrato(0.5, 2);
+			// // instrument.setFiltering(1.0, 2.0, 15.0, 0.01);
+
+			// instrument = new HSC.Instrument(audioContext, "Source/Instruments/Bb_clarinet.xml");
+			// //instrument.setVibrato(0.5, 8);
+
+			instrument = new HSC.Instrument(audioContext, "../Spectrums/Clarinet/notes.json");
 		}
 
 		function setupAudioNodes() {
@@ -227,7 +233,7 @@
 
 		function playCMajorScale() {
 			var scaleType = HSC.ScaleType.MAJOR;
-			var startingNote = HSC.getNoteByOctaveAndName(5, "C");
+			var startingNote = HSC.getNoteByName("C5");
 			var scale = HSC.buildScale(startingNote, scaleType, true);
 
 			var cues = new Array();
@@ -242,7 +248,7 @@
 		function playRandomCScale() {
 			var scaleTypes = new Array(HSC.ScaleType.CHROMATIC, HSC.ScaleType.MAJOR, HSC.ScaleType.MINOR_NATURAL, HSC.ScaleType.MINOR_HARMONIC, HSC.ScaleType.MINOR_MELODIC);
 			var randomScaleType = scaleTypes[Math.floor(Math.random()*scaleTypes.length)];
-			var startingNote = HSC.getNoteByOctaveAndName(5, "C");
+			var startingNote = HSC.getNoteByName("C5");
 			var scale = HSC.buildScale(startingNote, randomScaleType, true);
 
 			var cues = new Array();
@@ -254,7 +260,7 @@
 			instrument.playNotesAtCues(scale, cues, 0.1);
 		}		
 
-		function playDiatonicTriadsByOctaveAndName(octave, name) {
+		function playDiatonicTriadsByName(name) {
 			var diatonicTriads = [
 				HSC.DiatonicTriadType.I,
 				HSC.DiatonicTriadType.ii,
@@ -266,7 +272,7 @@
 				HSC.DiatonicTriadType.I,
 			];
       var scaleType = HSC.ScaleType.MAJOR;
-			var startingNote = HSC.getNoteByOctaveAndName(octave, name);
+			var startingNote = HSC.getNoteByName(name);
 			var scale = HSC.buildScale(startingNote, scaleType, false);
 
 			var chords = new Array();
@@ -280,34 +286,30 @@
 				instrument.playNotesAtCue(
 					chords[i], 
 					new HSC.Cue(noteLength, i*noteLength),
-					0.1
+					0.05
 				);
 			}
 		}
 
-		function getNoteFromScaleByOctaveNameScaleTypeScaleNoteNumber(
-			octave,
+		function getNoteFromScaleByNameScaleTypeAndScaleNoteNumber(
 			name,
 			scaleType,
 			scaleNoteNumber
 		) {
-			var startingNote = HSC.getNoteByOctaveAndName(octave, name);
+			var startingNote = HSC.getNoteByName(name);
 			var scale = HSC.buildScale(startingNote, scaleType, false);
 			return scale[scaleNoteNumber-1];
 		}
 
-		function playDiatonicTriadByOctaveNameScaleTypeAndTriadType(
-			octave, 
+		function playDiatonicTriadByNameScaleTypeAndTriadType(
 			name, 
 			scaleType, 
 			triadType
 		) {
-			debugger;
 			var scaleNoteNumber = HSC.getScaleNoteNumberFromDiatonicTriadType(
 				triadType
 			);
-			var note = getNoteFromScaleByOctaveNameScaleTypeScaleNoteNumber(
-				octave,
+			var note = getNoteFromScaleByNameScaleTypeAndScaleNoteNumber(
 				name,
 				scaleType,
 				scaleNoteNumber
@@ -556,51 +558,85 @@
 			return document.getElementById("inputNoteName").value;
 		}
 
+		function getInputNote() {
+			return HSC.getNoteByName(getInputNoteName());
+		}
+
+		function getInputNoteNameIncreasedByHalfStep() {
+			var note = getInputNote();
+			var nextNote = HSC.getNoteByHalfStepNumber(note.HalfStepNumber+1);
+			document.getElementById("inputNoteName").value = nextNote.Name;
+			return nextNote;
+		}
+
+		function getInputNoteNameIncreasedByWholeStep() {
+			getInputNoteNameIncreasedByHalfStep();
+			return getInputNoteNameIncreasedByHalfStep();
+		}
+
+		function getInputNoteNameDecreasedByHalfStep() {
+			var note = getInputNote();
+			var nextNote = HSC.getNoteByHalfStepNumber(note.HalfStepNumber-1);
+			document.getElementById("inputNoteName").value = nextNote.Name;
+			return nextNote;
+		}
+
+		function getInputNoteNameDecreasedByWholeStep() {
+			getInputNoteNameDecreasedByHalfStep();
+			return getInputNoteNameDecreasedByHalfStep();
+		}
+
 	</script>
 
 </head>
 
 <body>
 	<div id="buttons">
-		<input id="inputNoteName" type="text" value="C" />
+		<input id="inputNoteName" type="text" value="C4" />
+		<button onclick="instrument.play(getInputNote(), new HSC.Cue(2), 0.4);">Play Note</button>
+		<button onclick="instrument.play(getInputNoteNameDecreasedByWholeStep(), new HSC.Cue(2), 0.4);">vv</button>
+		<button onclick="instrument.play(getInputNoteNameDecreasedByHalfStep(), new HSC.Cue(2), 0.4);">v</button>
+		
+		<button onclick="instrument.play(getInputNoteNameIncreasedByHalfStep(), new HSC.Cue(2), 0.4);">^</button>
+		<button onclick="instrument.play(getInputNoteNameIncreasedByWholeStep(), new HSC.Cue(2), 0.4);">^^</button>
 		<br />
 		<div id="diatonicbuttons">
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.I);">I</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.II);">II</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.III);">III</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IV);">IV</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.V);">V</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VI);">VI</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VII);">VII</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.I);">I</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.II);">II</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.III);">III</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IV);">IV</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.V);">V</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VI);">VI</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VII);">VII</button>
 		<br />
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.It);">I+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IIt);">II+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IIIt);">III+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IVt);">IV+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.Vt);">V+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VIt);">VI+</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VIIt);">VII+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.It);">I+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IIt);">II+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IIIt);">III+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.IVt);">IV+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.Vt);">V+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VIt);">VI+</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.VIIt);">VII+</button>
 		<br />
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.i);">i</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.ii);">ii</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iii);">iii</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iv);">iv</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.v);">v</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vi);">vi</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vii);">vii</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.i);">i</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.ii);">ii</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iii);">iii</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iv);">iv</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.v);">v</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vi);">vi</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vii);">vii</button>
 		<br />
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.io);">io</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iio);">iio</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iiio);">iiio</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.ivo);">ivo</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vo);">vo</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vio);">vio</button>
-		<button onclick="playDiatonicTriadByOctaveNameScaleTypeAndTriadType('4', getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.viio);">viio</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.io);">io</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iio);">iio</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.iiio);">iiio</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.ivo);">ivo</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vo);">vo</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.vio);">vio</button>
+		<button onclick="playDiatonicTriadByNameScaleTypeAndTriadType(getInputNoteName(), HSC.ScaleType.MAJOR, HSC.DiatonicTriadType.viio);">viio</button>
 		<br />
 	</div>
 		<button onclick="playCMajorScale();">Play C Major Scale</button>
 		<button onclick="playRandomCScale();">Play Random C Scale</button>
-		<button onclick="playDiatonicTriadsByOctaveAndName(4, 'C');">
+		<button onclick="playDiatonicTriadsByName('C4');">
 			Play Diatonic Triads in C
 		</button>
 	</div>

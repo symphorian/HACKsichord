@@ -1,6 +1,6 @@
 var HSC = (function(hsc) {
 	// hsc.Instrument = function(audioContext, waveType, adsrEnvelope) {
-	hsc.Instrument = function(audioContext, instrumentXMLFileName) {
+	hsc.Instrument = function(audioContext, instrumentJSONFileName) {
 		this.AudioContext = audioContext;
 		this.VibratoFrequency = null;
 		this.VibratoDelay = null;
@@ -22,12 +22,14 @@ var HSC = (function(hsc) {
 	  }
 
 		var xmlRequest = new XMLHttpRequest();
-		xmlRequest.open("GET", instrumentXMLFileName, false);
+		xmlRequest.open("GET", instrumentJSONFileName, false);
 		xmlRequest.send();
-		var xmlDoc = xmlRequest.responseXML;
-		var waveType = xmlDoc.getElementsByTagName("WaveType")[0].childNodes[0].nodeValue;
-		var envelopeNode = xmlDoc.getElementsByTagName("Envelope")[0];
-		var noteHarmAmpNodes = xmlDoc.getElementsByTagName("Note");
+		// var xmlDoc = xmlRequest.responseXML;
+		// var waveType = xmlDoc.getElementsByTagName("WaveType")[0].childNodes[0].nodeValue;
+		// var envelopeNode = xmlDoc.getElementsByTagName("Envelope")[0];
+		// var noteHarmAmpNodes = xmlDoc.getElementsByTagName("Note");
+		var waveType = null;
+		var notesJson = JSON.parse(xmlRequest.responseText);
 
 		switch(waveType) {
 			case "sine":
@@ -49,40 +51,42 @@ var HSC = (function(hsc) {
 		// if (adsrEnvelope == undefined || 
 		// 	!(adsrEnvelope instanceof hsc.ADSREnvelope)
 		// ) {
-		// 	this.Envelope = new hsc.ADSREnvelope(.05, 1.2, .05, .1);
+		 	this.Envelope = new hsc.ADSREnvelope(.05, 1.2, .05, .1);
 		// } else {
 		// 	this.Envelope = adsrEnvelope;
 		// }
 
-		this.Envelope = new hsc.ADSREnvelope(
-			parseFloat(getFieldFromXMLNode(envelopeNode, "AttackDuration")), 
-			parseFloat(getFieldFromXMLNode(envelopeNode, "AttackVolume")), 
-			parseFloat(getFieldFromXMLNode(envelopeNode, "DecayDuration")), 
-			parseFloat(getFieldFromXMLNode(envelopeNode, "ReleaseDuration"))
-		);
+		// this.Envelope = new hsc.ADSREnvelope(
+		// 	parseFloat(getFieldFromXMLNode(envelopeNode, "AttackDuration")), 
+		// 	parseFloat(getFieldFromXMLNode(envelopeNode, "AttackVolume")), 
+		// 	parseFloat(getFieldFromXMLNode(envelopeNode, "DecayDuration")), 
+		// 	parseFloat(getFieldFromXMLNode(envelopeNode, "ReleaseDuration"))
+		// );
 
-		this.NoteHarmonicAmplitudes = new Object();
-		this.HarmonicAmplitudes = [];
-		for (var i = 0; i < noteHarmAmpNodes.length; i++) {
-			var node = noteHarmAmpNodes[i];
-			var name = node.getAttribute('pitch');
-			var maxAmp = node.getAttribute('maxAmp');
-			this.NoteHarmonicAmplitudes[name] = [];
+		// this.NoteHarmonicAmplitudes = new Object();
+		// this.HarmonicAmplitudes = [];
+		// for (var i = 0; i < noteHarmAmpNodes.length; i++) {
+		// 	var node = noteHarmAmpNodes[i];
+		// 	var name = node.getAttribute('pitch');
+		// 	var maxAmp = node.getAttribute('maxAmp');
+		// 	this.NoteHarmonicAmplitudes[name] = [];
 
-			var harmAmpNodes = node.getElementsByTagName("a");
-			for (var j = 0; j < harmAmpNodes.length; j++) {
-				var ampNode = harmAmpNodes[j];
-				var decibel = parseFloat(ampNode.childNodes[0].nodeValue);
-				// var gainValue = Math.pow(10, (decibel/10));
-				//var gainValue = Math.pow(10, (decibel/maxAmp));
-				// var gainValue = Math.pow(10, ((decibel-maxAmp+1)/10));
-				var gainValue = decibel/maxAmp; // this seems right!!!
-				this.NoteHarmonicAmplitudes[name].push(gainValue);
-				if (name == "D#3") {
-					this.HarmonicAmplitudes.push(gainValue);
-				}
-			}
-		}
+		// 	var harmAmpNodes = node.getElementsByTagName("a");
+		// 	for (var j = 0; j < harmAmpNodes.length; j++) {
+		// 		var ampNode = harmAmpNodes[j];
+		// 		var decibel = parseFloat(ampNode.childNodes[0].nodeValue);
+		// 		// var gainValue = Math.pow(10, (decibel/10));
+		// 		//var gainValue = Math.pow(10, (decibel/maxAmp));
+		// 		// var gainValue = Math.pow(10, ((decibel-maxAmp+1)/10));
+		// 		var gainValue = decibel/maxAmp; // this seems right!!!
+		// 		this.NoteHarmonicAmplitudes[name].push(gainValue);
+		// 		if (name == "D#3") {
+		// 			this.HarmonicAmplitudes.push(gainValue);
+		// 		}
+		// 	}
+		// }
+
+		this.NoteHarmonicAmplitudes = notesJson;
 	}
 
 	hsc.Cue = function(duration, futureTime, currentTime) {
@@ -159,44 +163,14 @@ var HSC = (function(hsc) {
     var decayDuration = this.Envelope.DecayDuration;
     var releaseDuration = this.Envelope.ReleaseDuration;
 
-    if (!this.NoteHarmonicAmplitudes[note.Name]) {
+    if (!this.NoteHarmonicAmplitudes[note.Name.toLowerCase()]) {
     	return;
     }
 
-    var harmonicAmplitudes = this.NoteHarmonicAmplitudes[note.Name];
+    var harmonicAmplitudes = this.NoteHarmonicAmplitudes[note.Name.toLowerCase()];
     //var harmonicAmplitudes = this.HarmonicAmplitudes;
     for (var i = 0; i < harmonicAmplitudes.length; i++) {
-    	// if (note.Frequency * i > 10000) {
-    	// 	break;
-    	// }
-    	var harmAmp = harmonicAmplitudes[i];
-
-    	/* none of this works for very long
-    	if (i > (10000 / note.Frequency) / 2) {
-    		harmAmp = harmAmp / 10;
-    	}
-    	if (i == 0) {
-	    	if (note.Frequency < 150) {
-	    		//harmAmp *= 1.0;
-	    		harmAmp = harmonicAmplitudes[i];
-				} else if (note.Frequency < 300) {
-	    		//harmAmp *= .8;
-	    		harmAmp = harmonicAmplitudes[i+2];
-	    	} else if (note.Frequency < 600) {
-	    		//harmAmp *= .6;
-	    		harmAmp = harmonicAmplitudes[i+4];
-	    	} else if (note.Frequency < 1200) {
-	    		//harmAmp *= .4;
-	    		harmAmp = harmonicAmplitudes[i+6];
-	    	} else if (note.Frequency < 2400) {
-	    		//harmAmp *= .2;
-	    		harmAmp = harmonicAmplitudes[i+8];
-	    	} else if (note.Frequency < 4800) {
-	    		//harmAmp *= .1;
-	    		harmAmp = harmonicAmplitudes[i+8];
-	    	}
-	    }
-	    */
+    	var harmAmp = harmonicAmplitudes[i].amp;
     	var vibratoOscNode;
 			var vibratoGainNode;
 			if (this.hasVibrato()) {
@@ -221,7 +195,8 @@ var HSC = (function(hsc) {
 
 			var oscillatorNode = this.AudioContext.createOscillator();
 			oscillatorNode.type = this.WaveType;
-			oscillatorNode.frequency.value = note.Frequency * (i+1);
+			//oscillatorNode.frequency.value = note.Frequency * (i+1);
+			oscillatorNode.frequency.value = harmonicAmplitudes[i].freq;
 
 			var oscGainNode = this.AudioContext.createGain();
 			oscGainNode.gain.value = harmAmp;
@@ -262,102 +237,6 @@ var HSC = (function(hsc) {
 			oscillatorNode.start(currentTime + futureTime, 0, duration);
 			oscillatorNode.stop(currentTime + futureTime + duration);
     }
-
-
-
-		// var vibratoOscNode;
-		// var vibratoGainNode;
-		// if (this.hasVibrato()) {
-		// 	vibratoOscNode = this.AudioContext.createOscillator();
-		// 	vibratoOscNode.type = "triangle";
-		// 	vibratoOscNode.frequency.value = this.VibratoFrequency;
-
-		// 	vibratoGainNode = this.AudioContext.createGain();
-		// 	vibratoGainNode.gain.linearRampToValueAtTime(
-		// 		0.0, 
-		// 		currentTime + futureTime
-		// 	);
-		// 	vibratoGainNode.gain.linearRampToValueAtTime(
-		// 		0.0, 
-		// 		currentTime + futureTime + this.VibratoDelay
-		// 	);
-		// 	vibratoGainNode.gain.linearRampToValueAtTime(
-		// 		this.VibratoValue, 
-		// 		currentTime + futureTime + this.VibratoDelay + 1
-		// 	);
-		// }
-
-		// var oscillatorNode = this.AudioContext.createOscillator();
-		// oscillatorNode.type = this.WaveType;
-		// oscillatorNode.frequency.value = note.Frequency;
-
-		// var cutoffFrequency;
-		// var lowPassFilter;
-		// var peakingFilter;
-		// if (this.hasFiltering()) {
-		// 	cutoffFrequency = note.Frequency*Math.pow(
-		// 		this.FilterFrequencyModifier, (volume*this.FilterAmplitudeModifier)
-		// 	);
-
-		// 	lowPassFilter = this.AudioContext.createBiquadFilter();
-		// 	lowPassFilter.type = "lowpass";
-		// 	lowPassFilter.frequency.value = cutoffFrequency;
-
-		// 	console.log("frequency: " + note.Frequency);
-		// 	console.log("lowpass cutoff frequency: " + lowPassFilter.frequency.value);
-
-		// 	peakingFilter = this.AudioContext.createBiquadFilter();
-		// 	peakingFilter.type = "peaking";
-		// 	peakingFilter.frequency.value = cutoffFrequency / Math.pow(2, 7);
-		// 	peakingFilter.gain.value = this.FilterMaxGain * (1.0 - volume);
-		// 	peakingFilter.Q.value = this.FilterMaxQ * (1.0 - volume);
-
-		// 	console.log("volume: " + volume);
-		// 	console.log("peaking frequency: " + peakingFilter.frequency.value);
-		// 	console.log("peaking Q: " + peakingFilter.Q.value);
-		// 	console.log("peaking gain: " + peakingFilter.gain.value);
-		// }
-		
-		// var gainNode = this.AudioContext.createGain();
-		// //gainNode.gain.value = 0.1;
-		// gainNode.gain.linearRampToValueAtTime(0.0, currentTime + futureTime);
-		// gainNode.gain.linearRampToValueAtTime(
-		// 	volume*attackVolume, 
-		// 	currentTime + futureTime + attackDuration
-		// );
-		// gainNode.gain.linearRampToValueAtTime(
-		// 	volume, 
-		// 	currentTime + futureTime + attackDuration + decayDuration
-		// );
-		// gainNode.gain.linearRampToValueAtTime(
-		// 	volume, 
-		// 	currentTime + futureTime + duration - releaseDuration
-		// );
-		// gainNode.gain.linearRampToValueAtTime(
-		// 	0.0, 
-		// 	currentTime + futureTime + duration
-		// );
-
-		// if (this.hasVibrato()) {
-		// 	vibratoOscNode.connect(vibratoGainNode);
-		// 	vibratoGainNode.connect(oscillatorNode.frequency);
-		// 	vibratoOscNode.start(currentTime + futureTime, 0, duration);
-		// 	vibratoOscNode.stop(currentTime + futureTime + duration);
-		// }
-		// //oscillatorNode.connect(gainNode);
-
-		// if (this.hasFiltering()) {
-		// 	oscillatorNode.connect(lowPassFilter);
-		// 	lowPassFilter.connect(peakingFilter);
-		// 	peakingFilter.connect(gainNode);
-		// } else {
-		// 	oscillatorNode.connect(gainNode);
-		// }
-		// gainNode.connect(dynamicsCompressorNode);
-		// gainNode.connect(this.AudioContext.destination);
-
-		// oscillatorNode.start(currentTime + futureTime, 0, duration);
-		// oscillatorNode.stop(currentTime + futureTime + duration);
 	};
 
 	hsc.Instrument.prototype.playNotesAtCue = function(notes, cue, volume) {

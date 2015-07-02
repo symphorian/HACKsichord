@@ -7,15 +7,15 @@ var HSC = (function(hsc) {
 
     this.Letter = letter;
     this.Sign = sign;
-    this.Name = this.Letter + this.Sign;
     this.Octave = octave;
+    this.Name = this.Letter + this.Sign + this.Octave;
     this.Frequency = frequency;
     this.HalfStepNumber = parseInt(halfStepNumber, 10);
 	}
 
 	// dictionary definitions
   var notes = new Object();
-	var notesByOctaveAndName = new Object(); // Object<Octave, Object<Name, Note>>
+	var notesByName = new Object(); // Object<Name, Note>
 	var notesByHalfStepNumber = new Object(); // Object<HalfStepNumber, Array<Note>>
 
 	hsc.getNoteByHalfStepNumber = function(halfStepNumber) {
@@ -27,13 +27,14 @@ var HSC = (function(hsc) {
 		}
 	}
 
-	hsc.getNoteByOctaveAndName = function(octave, name) {
-		var result = null;
-		var octave = notesByOctaveAndName[octave];
-		if (octave && octave[name]) {
-			result = octave[name];
-		}
-		return result;
+	hsc.getNoteByName = function(name) {
+		// var result = null;
+		// var octave = notesByName[octave];
+		// if (octave && octave[name]) {
+		// 	result = octave[name];
+		// }
+		// return result;
+		return notesByName[name];
 	}
 
 	function getFieldFromXMLNode(xmlNode, fieldName) {
@@ -74,14 +75,10 @@ var HSC = (function(hsc) {
 
 	  for (var id in notes) {
 	  	var note = notes[id];
-	  	var octave = note.Octave;
 	  	var name = note.Name;
 	  	var halfStepNumber = note.HalfStepNumber;
 
-	  	if (!notesByOctaveAndName[octave]) {
-	  		notesByOctaveAndName[octave] = new Object();
-	  	}
-	  	notesByOctaveAndName[octave][name] = note;
+	  	notesByName[name] = note;
 
 	    if (!notesByHalfStepNumber[halfStepNumber]) {
 	    	notesByHalfStepNumber[halfStepNumber] = [];

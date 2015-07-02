@@ -4,248 +4,28 @@
 		"selected_items":
 		[
 			[
-				"return",
-				"return"
+				"harm",
+				"harmonicAmplitudes"
 			],
 			[
-				"IV",
-				"IV"
+				"notes",
+				"notesJson"
 			],
 			[
-				"ii",
-				"ii"
+				"getIn",
+				"getInputNoteNameIncreasedByHalfStep"
 			],
 			[
-				"II",
-				"III"
+				"osc",
+				"oscGainNode"
 			],
 			[
-				"cut",
-				"cutoffFrequency"
+				"get",
+				"getFieldFromXMLNode"
 			],
 			[
-				"low",
-				"lowPassFilter"
-			],
-			[
-				"Has",
-				"hasFiltering"
-			],
-			[
-				"Max",
-				"FilterMaxGain"
-			],
-			[
-				"freq",
-				"frequency"
-			],
-			[
-				"peaking",
-				"peakingFilter"
-			],
-			[
-				"max",
-				"maxQ"
-			],
-			[
-				"Filter",
-				"FilterFrequencyModifier"
-			],
-			[
-				"FilterMax",
-				"FilterMaxQ"
-			],
-			[
-				"Fil",
-				"FilterAmplitudeModifier"
-			],
-			[
-				"LowPas",
-				"LowPassAmplitudeModifier"
-			],
-			[
-				"Vibr",
-				"VibratoValue"
-			],
-			[
-				"in",
-				"instrument"
-			],
-			[
-				"vib",
-				"vibratoGainNode"
-			],
-			[
-				"Vi",
-				"VibratoFrequency"
-			],
-			[
-				"Vib",
-				"VibratoValue"
-			],
-			[
-				"au",
-				"AudioContext"
-			],
-			[
-				"V",
-				"VibratoValue"
-			],
-			[
-				"decay",
-				"decayDuration"
-			],
-			[
-				"at",
-				"attackDuration"
-			],
-			[
-				"attack",
-				"attackVolume"
-			],
-			[
-				"Att",
-				"AttackDuration"
-			],
-			[
-				"tri",
-				"triadTemplate"
-			],
-			[
-				"prot",
-				"prototype"
-			],
-			[
-				"triadt",
-				"triadType"
-			],
-			[
-				"Play",
-				"PlayNoteForDurationAtFutureTimeWithCurrentTime"
-			],
-			[
-				"diminished8th",
-				"diminished8thInterval"
-			],
-			[
-				"augmented8th",
-				"augmented8thInterval"
-			],
-			[
-				"diminished7th",
-				"diminished7thInterval"
-			],
-			[
-				"augmented7",
-				"augmented7thInterval"
-			],
-			[
-				"minor6th",
-				"minor6thInterval"
-			],
-			[
-				"major6t",
-				"major6thInterval"
-			],
-			[
-				"diminished5th",
-				"diminished5thInterval"
-			],
-			[
-				"augmented5th",
-				"augmented5thInterval"
-			],
-			[
-				"perfect5th",
-				"perfect5thInterval"
-			],
-			[
-				"diminished4th",
-				"diminished4thInterval"
-			],
-			[
-				"augmented4th",
-				"augmented4thInterval"
-			],
-			[
-				"perfect4t",
-				"perfect4thInterval"
-			],
-			[
-				"augmented3",
-				"augmented3rdInterval"
-			],
-			[
-				"minor3r",
-				"minor3rdInterval"
-			],
-			[
-				"major3rd",
-				"major3rdInterval"
-			],
-			[
-				"diminished2nd",
-				"diminished2ndInterval"
-			],
-			[
-				"augmented2nd",
-				"augmented2ndInterval"
-			],
-			[
-				"MINOR_Se",
-				"MINOR_SECOND"
-			],
-			[
-				"major2nd",
-				"major2ndInterval"
-			],
-			[
-				"augmented1s",
-				"augmented1stInterval"
-			],
-			[
-				"perfect1s",
-				"perfect1stInterval"
-			],
-			[
-				"P",
-				"PERFECT_FIRST"
-			],
-			[
-				"augmented7th",
-				"augmented7thChordTemplate"
-			],
-			[
-				"chord",
-				"chordTemplate"
-			],
-			[
-				"AUG",
-				"AUGMENTED_SEVENTH"
-			],
-			[
-				"MINOR_M",
-				"MINOR_MAJOR_SEVENTH"
-			],
-			[
-				"minor7th",
-				"minor7thChordTemplate"
-			],
-			[
-				"MINO",
-				"MINOR_SEVENTH"
-			],
-			[
-				"major7th",
-				"major7thChordTemplate"
-			],
-			[
-				"chor",
-				"chordTemplate"
-			],
-			[
-				"MAJ",
-				"MAJOR_SEVENTH"
+				"inst",
+				"instrumentXMLFileName"
 			],
 			[
 				"notesby",
@@ -258,10 +38,6 @@
 			[
 				"notesBy",
 				"notesByOctaveAndName"
-			],
-			[
-				"get",
-				"getXMLNodeField"
 			],
 			[
 				"dis",
@@ -514,6 +290,230 @@
 			[
 				"CA",
 				"CANVASMANAGER"
+			],
+			[
+				"currentm",
+				"currentMemoryIndex"
+			],
+			[
+				"pr",
+				"prototype"
+			],
+			[
+				"memo",
+				"memory"
+			],
+			[
+				"curre",
+				"currentFrameIndex"
+			],
+			[
+				"getn",
+				"getNthLatestMemory"
+			],
+			[
+				"lastKeyna",
+				"lastKeyNamePress"
+			],
+			[
+				"lastKeyc",
+				"lastKeyCodePress"
+			],
+			[
+				"rotat",
+				"rotationAcc"
+			],
+			[
+				"roat",
+				"rotationVel"
+			],
+			[
+				"mem",
+				"memoryCapacity"
+			],
+			[
+				"new",
+				"newestMemoryIndex"
+			],
+			[
+				"or",
+				"originY"
+			],
+			[
+				"ori",
+				"originX"
+			],
+			[
+				"origi",
+				"originY"
+			],
+			[
+				"orig",
+				"originY"
+			],
+			[
+				"lastkey",
+				"lastKeyCodeUp"
+			],
+			[
+				"key",
+				"keyCode"
+			],
+			[
+				"isk",
+				"isKeyCodeLowercase"
+			],
+			[
+				"is",
+				"isKeyCodeUppercase"
+			],
+			[
+				"offset",
+				"offsetHeight"
+			],
+			[
+				"append",
+				"appendChild"
+			],
+			[
+				"auio",
+				"audioXMLfilename"
+			],
+			[
+				"loadI",
+				"loadAudioAssetXML"
+			],
+			[
+				"audioasse",
+				"audioAssetsFound"
+			],
+			[
+				"loadImag",
+				"loadImageAssetXML"
+			],
+			[
+				"imageass",
+				"imageAssetsFound"
+			],
+			[
+				"au",
+				"audioAssetsLoaded"
+			],
+			[
+				"audioass",
+				"audioAssetsFound"
+			],
+			[
+				"im",
+				"imageAssetsLoaded"
+			],
+			[
+				"image",
+				"imageAssetsFound"
+			],
+			[
+				"textImage",
+				"textImageData"
+			],
+			[
+				"textIm",
+				"textImage"
+			],
+			[
+				"pro",
+				"prototype"
+			],
+			[
+				"canvas",
+				"CanvasFrame"
+			],
+			[
+				"assetslo",
+				"assetsLoadedEvent"
+			],
+			[
+				"cu",
+				"currentMovie"
+			],
+			[
+				"cur",
+				"currentMovie"
+			],
+			[
+				"set",
+				"setFrameData"
+			],
+			[
+				"movie",
+				"movieName"
+			],
+			[
+				"m",
+				"movieName"
+			],
+			[
+				"movief",
+				"movieFrameAliases"
+			],
+			[
+				"getStrin",
+				"getStringFromKeyCodes"
+			],
+			[
+				"Key",
+				"KEYCODES"
+			],
+			[
+				"addmouse",
+				"addMouseClickBehavior"
+			],
+			[
+				"Erro",
+				"ERROR"
+			],
+			[
+				"logT",
+				"logThreshold"
+			],
+			[
+				"return",
+				"returnHomeByFraction"
+			],
+			[
+				"frame",
+				"frameData"
+			],
+			[
+				"proto",
+				"prototype"
+			],
+			[
+				"bloc",
+				"blockClusterPositions"
+			],
+			[
+				"img",
+				"imgDataArray"
+			],
+			[
+				"working",
+				"workingCanvasFrame"
+			],
+			[
+				"butt",
+				"butterflyCount"
+			],
+			[
+				"addR",
+				"addRandomFilter"
+			],
+			[
+				"ang",
+				"angularVelUpdate"
+			],
+			[
+				"update",
+				"updateWorkingImageArray"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "blankslate.html",
 			"settings":
 			{
-				"buffer_size": 20426,
+				"buffer_size": 21696,
 				"line_ending": "Windows"
 			}
 		},
@@ -536,34 +536,26 @@
 			}
 		},
 		{
+			"file": "Source/Instruments/orig/Bb_clarinet.xml",
+			"settings":
+			{
+				"buffer_size": 45393,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "Source/HACKsichordInstrument.js",
 			"settings":
 			{
-				"buffer_size": 6830,
+				"buffer_size": 12517,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "Source/HACKsichordDefinitions.js",
+			"file": "Source/HACKsichordInstrument2.js",
 			"settings":
 			{
-				"buffer_size": 16103,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Source/HACKsichordNotes.js",
-			"settings":
-			{
-				"buffer_size": 2721,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Source/HACKsichordKeySignatures.js",
-			"settings":
-			{
-				"buffer_size": 1947,
+				"buffer_size": 8610,
 				"line_ending": "Windows"
 			}
 		},
@@ -580,6 +572,30 @@
 			"settings":
 			{
 				"buffer_size": 24540,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Source/Instruments/sharc.xml",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Source/Instruments/Bb_clarinet.xml",
+			"settings":
+			{
+				"buffer_size": 36318,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Source/HACKsichordNotes.js",
+			"settings":
+			{
+				"buffer_size": 2586,
 				"line_ending": "Windows"
 			}
 		}
@@ -608,14 +624,13 @@
 	},
 	"file_history":
 	[
-		"/C/xampp/htdocs/HACKsichord/.gitattributes",
-		"/C/Users/Avaric/AppData/Roaming/Sublime Text 2/Packages/JavaScript/JavaScript Indent.tmPreferences",
-		"/C/Users/Avaric/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/C/xampp/htdocs/HACKsichord/HACKsichordBuilder.js",
-		"/C/xampp/htdocs/HACKsichord/HACKsichordDefinitions.js",
-		"/C/xampp/htdocs/HACKsichord/HACKsichordNotes.js",
-		"/C/xampp/htdocs/HACKsichord/HACKsichordKeySignatures.js",
-		"/C/xampp/htdocs/HACKsichord/HACKsichordInstrument.js",
+		"/C/xampp/htdocs/HACKsichord/Source/HACKsichordInstrument2",
+		"/C/Users/Symphori/Desktop/Spectrums/Clarinet/e3_2048.txt",
+		"/C/Users/Symphori/Desktop/Spectrums/Clarinet/e3_1024.txt",
+		"/C/xampp/htdocs/sharc-angular/json/Bb_clarinet/d4.json",
+		"/C/xampp/htdocs/sharc-angular/json/Bb_clarinet/c4.json",
+		"/C/xampp/htdocs/HACKsichord/Source/HACKsichordDefinitions.js",
+		"/C/xampp/htdocs/HACKsichord/Source/Instruments/Bb_clarinet.xml",
 		"/C/xampp/htdocs/BlocksJS/BlocksJS.sublime-project",
 		"/C/Windows/System32/drivers/etc/hosts",
 		"/C/Windows/System32/drivers/etc/lmhosts.sam",
@@ -735,7 +750,8 @@
 		"/C/Users/Symphori/Desktop/Blocks/FixedTextBlock",
 		"/C/Users/Symphori/Google Drive/Blocks/Globals.js",
 		"/C/Users/Symphori/Google Drive/Blocks/index.html",
-		"/C/Users/Symphori/Google Drive/Blocks/Block.js"
+		"/C/Users/Symphori/Google Drive/Blocks/Block.js",
+		"/C/Users/Symphori/Google Drive/Blocks/Behaviors.js"
 	],
 	"find":
 	{
@@ -750,12 +766,15 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
-			"flatOctaveDefinition",
-			"generalOctaveDefinition",
-			"SCALETYPE",
+			"playDiatonicTriadByOctaveNameScaleTypeAndTriadType",
+			"playCMajorScale",
+			"getNoteByOctaveAndName",
+			"note",
+			"envelope",
+			"instrument",
 			"playScaleTypeByHalfStepNumberWithNoteDuration",
 			"playRandomScale",
 			"getNoteFrequencyByOctaveAndLetter\n",
@@ -819,7 +838,10 @@
 		"regex": false,
 		"replace_history":
 		[
-			"SCALE_TYPE",
+			"playDiatonicTriadByNameScaleTypeAndTriadType",
+			"Note",
+			"Envelope",
+			"Instrument",
 			"NoteNamePair",
 			"MinorKeyName",
 			"MajorKeyName",
@@ -868,15 +890,15 @@
 					"file": "blankslate.html",
 					"settings":
 					{
-						"buffer_size": 20426,
+						"buffer_size": 21696,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								361,
-								361
+								17196,
+								17196
 							]
 						],
 						"settings":
@@ -886,7 +908,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 8502.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -903,8 +925,8 @@
 						"selection":
 						[
 							[
-								529,
-								529
+								493,
+								493
 							]
 						],
 						"settings":
@@ -918,6 +940,32 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Source/Instruments/orig/Bb_clarinet.xml",
+					"settings":
+					{
+						"buffer_size": 45393,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3088,
+								3088
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 166.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
 				}
 			]
 		},
@@ -926,115 +974,62 @@
 			"sheets":
 			[
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "Source/HACKsichordInstrument.js",
 					"settings":
 					{
-						"buffer_size": 6830,
+						"buffer_size": 12517,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3931,
-								3931
+								0,
+								12517
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2
+							"tab_size": 2,
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "Source/HACKsichordDefinitions.js",
-					"settings":
-					{
-						"buffer_size": 16103,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								15888,
-								15888
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2
-						},
-						"translation.x": 0.0,
-						"translation.y": 7648.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "Source/HACKsichordNotes.js",
+					"file": "Source/HACKsichordInstrument2.js",
 					"settings":
 					{
-						"buffer_size": 2721,
+						"buffer_size": 8610,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								456,
-								456
+								6594,
+								6594
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2016.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "Source/HACKsichordKeySignatures.js",
-					"settings":
-					{
-						"buffer_size": 1947,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								937,
-								937
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "KeySignatures.xml",
 					"settings":
 					{
@@ -1045,8 +1040,8 @@
 						"selection":
 						[
 							[
-								1403,
-								1403
+								4012,
+								4012
 							]
 						],
 						"settings":
@@ -1055,13 +1050,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 938.0,
+						"translation.y": 2468.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "NoteFrequencies.xml",
 					"settings":
 					{
@@ -1072,8 +1067,8 @@
 						"selection":
 						[
 							[
-								1797,
-								1797
+								8701,
+								8708
 							]
 						],
 						"settings":
@@ -1083,6 +1078,86 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Source/Instruments/sharc.xml",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "Source/Instruments/Bb_clarinet.xml",
+					"settings":
+					{
+						"buffer_size": 36318,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								20333,
+								20333
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Source/HACKsichordNotes.js",
+					"settings":
+					{
+						"buffer_size": 2586,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2336,
+								2336
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2
+						},
+						"translation.x": 0.0,
+						"translation.y": 378.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1118,7 +1193,7 @@
 		"cols":
 		[
 			0.0,
-			0.482192040106,
+			0.442224953903,
 			1.0
 		],
 		"rows":
@@ -1153,6 +1228,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 190.0,
+	"side_bar_width": 231.0,
 	"status_bar_visible": true
 }
